@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MVPHotFix.iml" filepath="$PROJECT_DIR$/MVPHotFix.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/motorhot/motordex.iml" filepath="$PROJECT_DIR$/motorhot/motordex.iml" />
+      <module fileurl="file://$PROJECT_DIR$/motorlib/motorlib.iml" filepath="$PROJECT_DIR$/motorlib/motorlib.iml" />
+    </modules>
+  </component>
+</project>
