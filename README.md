@@ -2,6 +2,13 @@
 android基于MVP的热修复方案构思，不使用第三方
 
 
+## 构想
+
+核心思想就是Presenter层只写接口，然后使用java的classloader机制加载Presenter层的实现类来产生对象然后赋值给接口指针调用。通过不停的更换classloader所加载的文件，但调用方法一致，来达到热修复的目的。   
+下面是我画的一个整体的结构图。  
+
+![mvphotfix结构图](http://imaster.top/blogimgs/mvp_hot_fix.jpg)    
+
 ## 由来
 
 现在开发android项目大部分都已经由mvc转移到了mvp，关于mvp是什么大致也不必多说了，无非三个层：  
@@ -20,12 +27,6 @@ android基于MVP的热修复方案构思，不使用第三方
 - 项目背景：mvp的项目。  
 - 需求：在不修改model层和view层的基础上，实现对Presenter层的热修复。  
 
-## 构想
-
-核心思想就是Presenter层只写接口，然后使用java的classloader机制加载Presenter层的实现类来产生对象然后赋值给接口指针调用。通过不停的更换classloader所加载的文件，但调用方法一致，来达到热修复的目的。   
-下面是我画的一个整体的结构图。  
-
-![mvphotfix结构图](http://imaster.top/blogimgs/mvp_hot_fix.jpg)    
 
 ## 尝试实现
 
