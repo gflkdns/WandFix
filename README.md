@@ -1,13 +1,12 @@
-# MVPHotFix
-android基于MVP的热修复方案构思，不使用第三方
 
 
-## 构想
+核心思想就是Presenter层只写接口，然后使用java的classloader机制加载Presenter层的实现类来产生对象然后赋值给接口指针调用。通过不停的更换classloader所加载的文件，但调用方法一致，来达到热修复的目的。   
 
 下面是我画的一个整体的结构图。  
 
-![mvphotfix结构图](http://imaster.top/blogimgs/mvp_hot_fix.jpg)    
-核心思想就是Presenter层只写接口，然后使用java的classloader机制加载Presenter层的实现类来产生对象然后赋值给接口指针调用。通过不停的更换classloader所加载的文件，但调用方法一致，来达到热修复的目的。   
+![mvphotfix结构图](https://miqt.github.io/blogimgs/mvp_hot_fix.jpg)    
+
+<!-- more -->
 
 ## 由来
 
@@ -19,7 +18,6 @@ android基于MVP的热修复方案构思，不使用第三方
 图解(之前在别的博文看到的，觉得比较好就直接拿来用了):  
 ![MVP](https://upload-images.jianshu.io/upload_images/2413316-e7fe02362c275ddc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
 
-<!-- more -->
 
 在mvp模式中，model层和view层不再有直接交互，而把相应的工作交给了“中间人”Presenter层来处理。   
 因此在我们的项目中，Presenter层可以说是一个改动比较频繁，逻辑比较复杂的一个模块。也是较容易出现问题的一个模块，对Presenter层实现热修复，对项目的稳定性是十分有利的。   
@@ -27,14 +25,13 @@ android基于MVP的热修复方案构思，不使用第三方
 - 项目背景：mvp的项目。  
 - 需求：在不修改model层和view层的基础上，实现对Presenter层的热修复。  
 
-
 ## 尝试实现
 
 既然大体思路都有了，那么咱们就来尝试一下能不能行得通吧。做一个案例，功能非常简单，界面上一个按钮，点击按钮吐司一个字符串，这个字符串通过。   
 
 ###  1.创建项目
 除了一路next之外我这里想说的实际上是项目module结构：  
-![项目结构图](http://imaster.top/blogimgs/20180801154218.png)    
+![项目结构图](https://miqt.github.io/blogimgs/20180801154218.png)    
 
 - app里面主要写项目的相关界面。
 - motorlib里面主要写presenter接口和热修复、classloadler等相关的代码，另外model层也可以在里面写，其实它们可以写在app里面，但这样组件化的话，更有利于解耦。  
@@ -88,7 +85,7 @@ public class AppParsenterImpl implements AppParsenter {
 ###  4.热修复文件打包
 在android studio中的右侧，打开Gradle一栏，然后点击（也可以直接运行gradlew命令`gradlew motorhot:assembleRelease`）：  
 
-![打包](http://imaster.top/blogimgs/20180801160206.png)  
+![打包](https://miqt.github.io/blogimgs/20180801160206.png)  
 打包后的jar包文件存放在`.\motorhot\build\intermediates\bundles\release\classes.jar`  
 
 拿到打包好的classes.jar,然后使用android sdk提供的dx.bat将jar包转换为dex：
@@ -201,7 +198,7 @@ public class Motor {
 
 方便起见，热修复文件就不从网络下载了，因此直接把打包好的.dex拷贝到项目的assets文件夹中。   
 
-![打包](http://imaster.top/blogimgs/20180801165443.png)  
+![打包](https://miqt.github.io/blogimgs/20180801165443.png)  
 
 在motorlib中创建ObjectFactory，用来通过classloader生产对象：
 
@@ -265,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 运行结果：
-![打包](http://imaster.top/blogimgs/Screenshot_2018-08-01-17-11-50-936_com.example.mi.png)
+![打包](https://miqt.github.io/blogimgs/Screenshot_2018-08-01-17-11-50-936_com.example.mi.png)
 修改motorhot中的AppParsenterImpl，模拟修复了一个bug：
 ```java
 public class AppParsenterImpl implements AppParsenter {
@@ -277,7 +274,7 @@ public class AppParsenterImpl implements AppParsenter {
 ```
 
 重复4步骤，打包运行：
-![打包](http://imaster.top/blogimgs/Screenshot_2018-08-01-17-37-41-820_com.example.mi.png)
+![打包](https://miqt.github.io/blogimgs/Screenshot_2018-08-01-17-37-41-820_com.example.mi.png)
 
 
 
