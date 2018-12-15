@@ -1,15 +1,16 @@
 package com.example.motorlib;
 
-/**
- * Created by miqt on 2018/7/23.
- */
+import java.util.HashMap;
+import java.util.Map;
 
 public class ObjectFactory {
-    public static Object make(String type) {
+    static Map<Class, String> holder = new HashMap<>();
+
+    public static <T> T make(Class<T> tClass) {
         try {
-            Class<AppParsenter> ap = (Class<AppParsenter>) Motor.get()
-                    .getClassLoader().loadClass("com.example.motordex.AppParsenterImpl");
-            AppParsenter o = ap.newInstance();
+            Class<T> ap = (Class<T>) Motor.get()
+                    .getClassLoader().loadClass(holder.get(tClass));
+            T o = ap.newInstance();
             return o;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

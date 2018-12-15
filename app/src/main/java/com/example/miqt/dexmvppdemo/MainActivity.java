@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         Motor.init(this, new Motor.MotorListener() {
             @Override
             public void initFnish() {
-                ap = (AppParsenter) ObjectFactory.make(MainActivity.class.getName());
+                ap = (AppParsenter) ObjectFactory.make(AppParsenter.class);
             }
             @Override
             public void initError(Throwable throwable) {
