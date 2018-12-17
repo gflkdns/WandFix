@@ -6,26 +6,21 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.motorlib.AppParsenter;
-import com.example.motorlib.ObjectFactory;
-import com.example.motorlib.Motor;
+import com.miqt.wand.ClassInstall;
+import com.miqt.wand.Wand;
+import com.miqt.wand.anno.InjectObject;
 
 public class MainActivity extends AppCompatActivity {
+
+    @InjectObject("com.example.motordex.AppParsenterImpl")
     AppParsenter ap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Motor.init(this, new Motor.MotorListener() {
-            @Override
-            public void initFnish() {
-                ap = (AppParsenter) ObjectFactory.make(AppParsenter.class);
-            }
-            @Override
-            public void initError(Throwable throwable) {
-            }
-        });
-
+        Wand.init(this);
+        ClassInstall.inject(this);
     }
 
     public void getStr(View view) {

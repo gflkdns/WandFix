@@ -1,1 +1,1 @@
-include ':app', ':motorlib', ':motorhot'
+include ':app', ':motorlib', ':motorhot', ':wand', ':wand-compiler'

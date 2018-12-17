@@ -11,6 +11,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/motorhot" />
             <option value="$PROJECT_DIR$/motorlib" />
+            <option value="$PROJECT_DIR$/wand" />
+            <option value="$PROJECT_DIR$/wand-compiler" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

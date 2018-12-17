@@ -7,6 +7,8 @@
       <module fileurl="file://C:\Users\t54\Downloads\MVPHotFix\motorhot\motordex.iml" filepath="C:\Users\t54\Downloads\MVPHotFix\motorhot\motordex.iml" />
       <module fileurl="file://$PROJECT_DIR$/motorhot/motorhot.iml" filepath="$PROJECT_DIR$/motorhot/motorhot.iml" />
       <module fileurl="file://$PROJECT_DIR$/motorlib/motorlib.iml" filepath="$PROJECT_DIR$/motorlib/motorlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wand/wand.iml" filepath="$PROJECT_DIR$/wand/wand.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wand-compiler/wand-compiler.iml" filepath="$PROJECT_DIR$/wand-compiler/wand-compiler.iml" />
     </modules>
   </component>
 </project>
