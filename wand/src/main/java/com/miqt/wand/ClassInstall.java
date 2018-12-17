@@ -9,7 +9,11 @@ public class ClassInstall {
     private static final Map<String, Inject> injectMap = new HashMap<>();
 
     public static void inject(Object o) {
-        inject(o, o, activityProvider);
+        inject(o, null, activityProvider);
+    }
+
+    public static void inject(Object o, Map<String, Object[]> pramHouse) {
+        inject(o, pramHouse, activityProvider);
     }
 
     private static void inject(Object host, Object object, Provider provider) {
