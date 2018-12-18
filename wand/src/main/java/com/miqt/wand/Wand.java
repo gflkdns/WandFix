@@ -21,6 +21,7 @@ public class Wand {
     private static volatile Wand instance;
     private ClassLoader mClassLoader;
     private Handler mMainHandler;
+    private File dexFile;
 
     private Wand() {
         mMainHandler = new Handler(Looper.getMainLooper()) {
@@ -53,56 +54,64 @@ public class Wand {
         return instance;
     }
 
-    public static void init(Context context, MotorListener listener) {
+    public static void init(Context context, String assetDex, MotorListener listener) {
         get();
         instance.context = context;
         instance.listener = listener;
         //加载dex
-        instance.initClassLoader();
+        instance.initClassLoader(assetDex);
         //todo 网络检查dex更新
     }
 
     public static void init(Context context) {
-        init(context, null);
+        init(context, "wand.dex", null);
     }
 
-    private void initClassLoader() {
+    public boolean attachDex(File dex) {
+        String dataDir = context.getCacheDir().getAbsolutePath();
+        File file = null;
+        if (!(dex != null && dex.getAbsolutePath().contains(dataDir))) {
+            String dexDir = context.getCacheDir().getAbsolutePath() + "/wand/";
+            File dir = new File(dexDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            file = new File(dir, "mydex.dex");
+            FileUtils.copyFile(context, dex.getAbsolutePath(), file.getAbsolutePath());
+        }
+        ClassLoader lastLoader = mClassLoader;
+        mClassLoader = new DexClassLoader(
+                dexFile.getAbsolutePath(), context.getFilesDir().getAbsolutePath()
+                , null, context.getClassLoader());
+        if (mClassLoader != null) {
+            dexFile = file;
+            return true;
+        } else {
+            mClassLoader = lastLoader;
+            return false;
+        }
+    }
+
+    private void initClassLoader(String asset) {
         String dexDir = context.getCacheDir().getAbsolutePath() + "/dex/";
         File dir = new File(dexDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        File dexFile = new File(dir, "mydex.dex");
+        dexFile = new File(dir, "wand.dex");
         if (!(dexFile.exists() && dexFile.isFile() && dexFile.length() > 0)) {
-            copyFileFromAssets(context, "mydex.dex", dexFile.getAbsolutePath());
+            FileUtils.copyFileFromAssets(context, asset, dexFile.getAbsolutePath());
         }
         mClassLoader = new DexClassLoader(
                 dexFile.getAbsolutePath(), context.getFilesDir().getAbsolutePath()
                 , null, context.getClassLoader());
-    }
-
-    private boolean copyFileFromAssets(Context context, String assetName, String path) {
-        boolean bRet = false;
-        try {
-            InputStream is = context.getAssets().open(assetName);
-
-            File file = new File(path);
-            file.createNewFile();
-            FileOutputStream fos = new FileOutputStream(file);
-            byte[] temp = new byte[64];
-            int i = 0;
-            while ((i = is.read(temp)) > 0) {
-                fos.write(temp, 0, i);
-            }
-            fos.close();
-            is.close();
-            bRet = true;
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mClassLoader == null) {
+            Message.obtain(mMainHandler, ERROR, new IllegalStateException("dex file damage."));
+        } else {
+            Message.obtain(mMainHandler, FINISH);
         }
-
-        return bRet;
     }
+
 
     public ClassLoader getClassLoader() {
         return mClassLoader;
