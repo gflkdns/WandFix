@@ -13,7 +13,7 @@ import java.io.InputStream;
  */
 
 public class FileUtils {
-    public static boolean copyFileFromAssets(Context context, String assetName, String path) {
+    public static boolean copyFileFromAssets(Encrypter encrypter, Context context, String assetName, String path) {
         boolean bRet = false;
         try {
             InputStream is = context.getAssets().open(assetName);
@@ -21,13 +21,21 @@ public class FileUtils {
             File file = new File(path);
             file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
-            byte[] temp = new byte[64];
-            int i = 0;
-            while ((i = is.read(temp)) > 0) {
-                fos.write(temp, 0, i);
+            if (encrypter != null) {
+                encrypter.decrypt(fos, is);
+            } else {
+                byte[] temp = new byte[64];
+                int i = 0;
+                while ((i = is.read(temp)) > 0) {
+                    fos.write(temp, 0, i);
+                }
             }
-            fos.close();
-            is.close();
+            if (fos != null) {
+                fos.close();
+            }
+            if (is != null) {
+                is.close();
+            }
             bRet = true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -36,20 +44,28 @@ public class FileUtils {
         return bRet;
     }
 
-    public static boolean copyFile(Context context, String from, String to) {
+    public static boolean copyFile(Encrypter encrypter, Context context, String from, String to) {
         boolean bRet = false;
         try {
             FileInputStream is = new FileInputStream(from);
             File file = new File(to);
             file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
-            byte[] temp = new byte[64];
-            int i = 0;
-            while ((i = is.read(temp)) > 0) {
-                fos.write(temp, 0, i);
+            if (encrypter != null) {
+                encrypter.decrypt(fos, is);
+            } else {
+                byte[] temp = new byte[64];
+                int i = 0;
+                while ((i = is.read(temp)) > 0) {
+                    fos.write(temp, 0, i);
+                }
             }
-            fos.close();
-            is.close();
+            if (fos != null) {
+                fos.close();
+            }
+            if (is != null) {
+                is.close();
+            }
             bRet = true;
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.example.motorlib.AppParsenter;
 import com.miqt.wand.ClassInstall;
+import com.miqt.wand.Encrypter;
 import com.miqt.wand.ObjectFactory;
 import com.miqt.wand.Wand;
 import com.miqt.wand.anno.InjectObject;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Wand.init(this);
+        Wand.with(this).init();
         Map<String, Object[]> map = new HashMap<>();
         map.put("com.example.motordex.AppParsenterImpl", new Object[]{1, "参数2", "参数3"});
         ClassInstall.inject(this, map);

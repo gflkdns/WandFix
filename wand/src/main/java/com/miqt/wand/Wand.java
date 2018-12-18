@@ -22,6 +22,7 @@ public class Wand {
     private ClassLoader mClassLoader;
     private Handler mMainHandler;
     private File dexFile;
+    private Encrypter encrypter;
 
     private Wand() {
         mMainHandler = new Handler(Looper.getMainLooper()) {
@@ -54,17 +55,29 @@ public class Wand {
         return instance;
     }
 
-    public static void init(Context context, String assetDex, MotorListener listener) {
-        get();
-        instance.context = context;
-        instance.listener = listener;
-        //加载dex
-        instance.initClassLoader(assetDex);
-        //todo 网络检查dex更新
+    public static Wand with(Context context) {
+        get().context = context;
+        return get();
     }
 
-    public static void init(Context context) {
-        init(context, "wand.dex", null);
+    public Wand encrypter(Encrypter encrypter) {
+        instance.encrypter = encrypter;
+        return get();
+    }
+
+    public Wand listener(MotorListener listener) {
+        instance.listener = listener;
+        return get();
+    }
+
+    public Wand init(String access) {
+        initClassLoader(access);
+        return get();
+    }
+
+    public Wand init() {
+        initClassLoader("wand.dex");
+        return get();
     }
 
     public boolean attachDex(File dex) {
@@ -77,7 +90,7 @@ public class Wand {
                 dir.mkdirs();
             }
             file = new File(dir, "mydex.dex");
-            FileUtils.copyFile(context, dex.getAbsolutePath(), file.getAbsolutePath());
+            FileUtils.copyFile(encrypter, context, dex.getAbsolutePath(), file.getAbsolutePath());
         }
         ClassLoader lastLoader = mClassLoader;
         mClassLoader = new DexClassLoader(
@@ -100,7 +113,7 @@ public class Wand {
         }
         dexFile = new File(dir, "wand.dex");
         if (!(dexFile.exists() && dexFile.isFile() && dexFile.length() > 0)) {
-            FileUtils.copyFileFromAssets(context, asset, dexFile.getAbsolutePath());
+            FileUtils.copyFileFromAssets(encrypter, context, asset, dexFile.getAbsolutePath());
         }
         mClassLoader = new DexClassLoader(
                 dexFile.getAbsolutePath(), context.getFilesDir().getAbsolutePath()
