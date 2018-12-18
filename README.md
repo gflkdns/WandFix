@@ -1,4 +1,57 @@
 
+## 本项目是一个基于java ClassLoader实现的热修复框架。
+
+优点：
+- 类似于黄油刀可以直接对成员变量添加@InjectObject("com.example.motordex.AppParsenterImpl")注解,来绑定热修复包中的实现类。   
+- 无需关闭应用即可使修复包生效。   
+- 与mvp模式搭配使用效果最佳。   
+- 可以自己定义需要热修复的类。   
+
+
+使用方法：  
+```
+git clone https://github.com/miqt/MVPHotFix.git
+```
+
+添加依赖：  
+
+```
+compile project(':wand')
+annotationProcessor project(':wand-compiler')
+```
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+    //热修复包中的实现类
+    @InjectObject("com.example.motordex.AppParsenterImpl")
+    AppParsenter ap;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        ...
+        //初始化，可以放在application中调用一次即可
+        Wand.init(this);
+        //单个参数
+        ClassInstall.inject(this);
+
+        //多个参数的构造方法
+        //Map<String, Object[]> map = new HashMap<>();
+        //map.put("com.example.motordex.AppParsenterImpl", new Object[]{1, "参数2", "参数3"});
+        //ClassInstall.inject(this, map);
+
+        //调用
+        String str = ap.getStr();
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        ...
+    }
+}
+```
+
+
+
+
+# 实现原理
 
 核心思想就是Presenter层只写接口，然后使用java的classloader机制加载Presenter层的实现类来产生对象然后赋值给接口指针调用。通过不停的更换classloader所加载的文件，但调用方法一致，来达到热修复的目的。   
 
