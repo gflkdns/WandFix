@@ -2,7 +2,7 @@
 ## 本项目是一个基于java ClassLoader实现的热修复框架。
 
 优点：
-- 类似于黄油刀可以直接对成员变量添加@InjectObject("com.example.motordex.AppParsenterImpl")注解,来绑定热修复包中的实现类。   
+- 类似于黄油刀可以直接对成员变量添加@InjectObject("com.example.motordex.AppParsenterImpl2")注解,来绑定热修复包中的实现类。
 - 无需关闭应用即可使修复包生效。   
 - 与mvp模式搭配使用效果最佳。   
 - 可以自己定义需要热修复的类。   
@@ -24,7 +24,7 @@ annotationProcessor project(':wand-compiler')
 public class MainActivity extends AppCompatActivity {
 
     //热修复包中的实现类
-    @InjectObject("com.example.motordex.AppParsenterImpl")
+    @InjectObject("com.example.motordex.AppParsenterImpl2")
     AppParsenter ap;
 
     @Override
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         //多个参数的构造方法
         //Map<String, Object[]> map = new HashMap<>();
-        //map.put("com.example.motordex.AppParsenterImpl", new Object[]{1, "参数2", "参数3"});
+        //map.put("com.example.motordex.AppParsenterImpl2", new Object[]{1, "参数2", "参数3"});
         //ClassInstall.inject(this, map);
 
         //调用
@@ -260,7 +260,7 @@ public class ObjectFactory {
     public static Object make(String type) {
         try {
             Class<AppParsenter> ap = (Class<AppParsenter>) Motor.get()
-                    .getClassLoader().loadClass("com.example.motordex.AppParsenterImpl");
+                    .getClassLoader().loadClass("com.example.motordex.AppParsenterImpl2");
             AppParsenter o = ap.newInstance();
             return o;
         } catch (ClassNotFoundException e) {

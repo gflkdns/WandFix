@@ -22,7 +22,7 @@ public class ClassInstall {
             Inject inject = injectMap.get(className);
 
             if (inject == null) {
-                Class<?> aClass = Wand.get().getClassLoader().loadClass(className + "$$ObjectInject");
+                Class<?> aClass = Wand.get().getContext().getClassLoader().loadClass(className + "$$ObjectInject");
                 inject = (Inject) aClass.newInstance();
                 injectMap.put(className, inject);
             }

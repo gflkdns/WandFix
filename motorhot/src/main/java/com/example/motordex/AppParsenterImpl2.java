@@ -2,12 +2,12 @@ package com.example.motordex;
 
 import com.example.motorlib.AppParsenter;
 
-public class AppParsenterImpl implements AppParsenter {
+public class AppParsenterImpl2 implements AppParsenter {
 
     String string;
 
-    public AppParsenterImpl(Integer a, String b, String string) {
-        this.string = string;
+    public AppParsenterImpl2(Integer a, String b, String string) {
+        this.string = "321313";
     }
 
     @Override
