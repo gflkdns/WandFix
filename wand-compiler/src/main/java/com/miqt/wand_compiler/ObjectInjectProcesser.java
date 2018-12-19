@@ -80,11 +80,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
         return annotatedClass;
     }
 
-    /**
-     * 指定使用的 Java 版本。通常返回 SourceVersion.latestSupported()。
-     *
-     * @return
-     */
+//指定java版本SourceVersion.latestSupported();
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();

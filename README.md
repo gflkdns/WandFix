@@ -3,10 +3,11 @@
 
 优点：
 - 类似于黄油刀可以直接对成员变量添加@InjectObject("com.example.motordex.AppParsenterImpl")注解,来绑定热修复包中的实现类。
-- 无需关闭应用即可使修复包生效。   
-- 与mvp模式搭配使用效果最佳。   
+- 无需关闭应用即可使修复包生效。
+- 与mvp模式搭配使用效果最佳。
 - 可以自己定义需要热修复的类。
-- 可以自己配置dex加密算法，保护dex文件的安全
+- 可以自己配置dex加密算法，保护dex文件的安全。
+- 可以通过注解单独设置某个对象是否禁用双亲委托。
 
 
 使用方法：  
@@ -21,11 +22,21 @@ compile project(':wand')
 annotationProcessor project(':wand-compiler')
 ```
 
+代码调用：
+
+
 ```java
 public class MainActivity extends AppCompatActivity {
 
-    //热修复包中的实现类
-    @InjectObject("com.example.motordex.AppParsenterImpl")
+    @InjectObject(
+        "com.example.motordex.AppParsenterImpl"//热修复包中的实现类
+            )
+    AppParsenter ap;
+
+    @InjectObject(
+            value = "com.example.motordex.AppParsenterImpl",//热修复包中的实现类
+            level = ParentalEntrustmentLevel.PROJECT//启用双亲委托，优先加载本地类
+            )
     AppParsenter ap;
 
     @Override

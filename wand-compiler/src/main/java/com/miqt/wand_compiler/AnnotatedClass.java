@@ -1,5 +1,6 @@
 package com.miqt.wand_compiler;
 
+import com.miqt.wand.anno.ParentalEntrustmentLevel;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -43,10 +44,9 @@ public class AnnotatedClass {
                 .addParameter(TypeName.OBJECT, "source")
                 .addParameter(TypeUtil.PROVIDER, "provider");
 
-
         for (InjectObjectField field : mObjectFields) {
             // find views
-            injectMethod.addStatement("host.$N = ($T)(provider.make(source, $S,$N))",
+            injectMethod.addStatement("host.$N = ($T)(provider.make(source, \"$L\" ,$L))",
                     field.getFieldName(),
                     ClassName.get(field.getFieldType()),
                     field.getResId(),
@@ -56,13 +56,17 @@ public class AnnotatedClass {
         //generaClass
         TypeSpec injectClass = TypeSpec.classBuilder(mTypeElement.getSimpleName() + "$$ObjectInject")
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ParameterizedTypeName.get(TypeUtil.INJET,
-                        TypeName.get(mTypeElement.asType())))
+                .addSuperinterface(ParameterizedTypeName.get(TypeUtil.INJET, TypeName.get(mTypeElement.asType())))
                 .addMethod(injectMethod.build())
                 .build();
 
         String packgeName = mElements.getPackageOf(mTypeElement).getQualifiedName().toString();
 
-        return JavaFile.builder(packgeName, injectClass).build();
+        return JavaFile
+                .builder(packgeName, injectClass)
+                .addStaticImport(ParentalEntrustmentLevel.class,
+                        "NEVER", "PROJECT", "ANDROID", "JAVA"
+                )
+                .build();
     }
 }

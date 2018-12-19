@@ -7,17 +7,18 @@ import android.widget.Toast;
 
 import com.example.motorlib.AppParsenter;
 import com.miqt.wand.ClassInstall;
-import com.miqt.wand.Encrypter;
-import com.miqt.wand.ObjectFactory;
 import com.miqt.wand.Wand;
 import com.miqt.wand.anno.InjectObject;
+import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    @InjectObject("com.example.motordex.AppParsenterImpl")
+    @InjectObject(
+            value = "com.example.motordex.AppParsenterImpl",
+            level = ParentalEntrustmentLevel.PROJECT)
     AppParsenter ap;
 
     @Override
