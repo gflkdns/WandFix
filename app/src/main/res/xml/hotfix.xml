@@ -2,5 +2,5 @@
 <hotfix>
     <object
         interface="com.example.motorlib.AppParsenter"
-        target="com.example.motordex.AppParsenterImpl2" />
+        target="com.example.motordex.AppParsenterImpl" />
 </hotfix>

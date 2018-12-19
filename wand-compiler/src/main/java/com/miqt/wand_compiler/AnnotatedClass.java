@@ -43,18 +43,21 @@ public class AnnotatedClass {
                 .addParameter(TypeName.OBJECT, "source")
                 .addParameter(TypeUtil.PROVIDER, "provider");
 
+
         for (InjectObjectField field : mObjectFields) {
             // find views
-            injectMethod.addStatement("host.$N = ($T)(provider.make(source, \"$L\"))",
+            injectMethod.addStatement("host.$N = ($T)(provider.make(source, $S,$N))",
                     field.getFieldName(),
                     ClassName.get(field.getFieldType()),
-                    field.getResId());
+                    field.getResId(),
+                    field.getLevel());
         }
 
         //generaClass
         TypeSpec injectClass = TypeSpec.classBuilder(mTypeElement.getSimpleName() + "$$ObjectInject")
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ParameterizedTypeName.get(TypeUtil.INJET, TypeName.get(mTypeElement.asType())))
+                .addSuperinterface(ParameterizedTypeName.get(TypeUtil.INJET,
+                        TypeName.get(mTypeElement.asType())))
                 .addMethod(injectMethod.build())
                 .build();
 

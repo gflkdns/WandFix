@@ -1,5 +1,7 @@
 package com.miqt.wand;
 
+import com.miqt.wand.anno.ParentalEntrustmentLevel;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,10 +9,10 @@ import java.util.Map;
 public class ObjectFactory {
     static Map<Class, String> holder = new HashMap<>();
 
-    public static <T> T make(String classname, Object... pram) {
+    public static <T> T make(String classname, ParentalEntrustmentLevel level, Object... pram) {
         try {
-            Class<T> ap = (Class<T>) Wand.get().getClassLoader()
-                    .loadClass(classname);
+            Class<T> ap = (Class<T>) Wand.get()
+                    .loadClass(classname,level);
             T o = null;
             if (pram.length == 0) {
                 o = ap.newInstance();
@@ -34,9 +36,5 @@ public class ObjectFactory {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static <T> T make(String classname) {
-        return make(classname, null, null);
     }
 }

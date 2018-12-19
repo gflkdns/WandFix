@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.miqt.wand.anno.ParentalEntrustmentLevel;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -93,7 +95,7 @@ public class Wand {
             FileUtils.copyFile(encrypter, context, dex.getAbsolutePath(), file.getAbsolutePath());
         }
         ClassLoader lastLoader = mClassLoader;
-        mClassLoader = new DexClassLoader(
+        mClassLoader = new MyDexClassLoader(
                 dexFile.getAbsolutePath(), context.getFilesDir().getAbsolutePath()
                 , null, context.getClassLoader());
         if (mClassLoader != null) {
@@ -115,7 +117,7 @@ public class Wand {
         if (!(dexFile.exists() && dexFile.isFile() && dexFile.length() > 0)) {
             FileUtils.copyFileFromAssets(encrypter, context, asset, dexFile.getAbsolutePath());
         }
-        mClassLoader = new DexClassLoader(
+        mClassLoader = new MyDexClassLoader(
                 dexFile.getAbsolutePath(), context.getFilesDir().getAbsolutePath()
                 , null, context.getClassLoader());
         if (mClassLoader == null) {
@@ -126,8 +128,10 @@ public class Wand {
     }
 
 
-    public ClassLoader getClassLoader() {
-        return mClassLoader;
+    public Class<?> loadClass(String classname, ParentalEntrustmentLevel level) throws ClassNotFoundException {
+        MyDexClassLoader loader = (MyDexClassLoader) mClassLoader;
+        loader.setLevel(level);
+        return mClassLoader.loadClass(classname);
     }
 
     public Context getContext() {

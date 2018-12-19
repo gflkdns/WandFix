@@ -2,6 +2,7 @@ package com.miqt.wand_compiler;
 
 
 import com.miqt.wand.anno.InjectObject;
+import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -10,8 +11,13 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
 public class InjectObjectField {
+    private final ParentalEntrustmentLevel level;
     private VariableElement mVariableElement;
     private String mresId;
+
+    public ParentalEntrustmentLevel getLevel() {
+        return level;
+    }
 
     public InjectObjectField(Element element) throws IllegalArgumentException {
         if (element.getKind() != ElementKind.FIELD) {
@@ -22,6 +28,7 @@ public class InjectObjectField {
 
         InjectObject bindView = mVariableElement.getAnnotation(InjectObject.class);
         mresId = bindView.value();
+        level = bindView.level();
         if (mresId == null) {
             throw new IllegalArgumentException(
                     String.format("value() in %s for field %s is not valid !", InjectObject.class.getSimpleName(),
