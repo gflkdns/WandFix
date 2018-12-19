@@ -14,7 +14,10 @@ import java.io.InputStream;
 
 import dalvik.system.DexClassLoader;
 
-
+/**
+ * @author https://github.com/miqt/MVPHotFix
+ * @time 2018年12月19日17:34:00
+ */
 public class Wand {
     private static final int FINISH = 0x1;
     private static final int ERROR = 0x2;

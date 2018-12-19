@@ -8,10 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by t54 on 2018/12/18.
- */
-
 public class FileUtils {
     public static boolean copyFileFromAssets(Encrypter encrypter, Context context, String assetName, String path) {
         boolean bRet = false;

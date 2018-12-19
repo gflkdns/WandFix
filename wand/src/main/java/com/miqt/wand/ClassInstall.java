@@ -4,6 +4,10 @@ package com.miqt.wand;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author https://github.com/miqt/MVPHotFix
+ * @time 2018年12月19日17:35:40
+ */
 public class ClassInstall {
     private static final ObjectProvider activityProvider = new ObjectProvider();
     private static final Map<String, Inject> injectMap = new HashMap<>();
