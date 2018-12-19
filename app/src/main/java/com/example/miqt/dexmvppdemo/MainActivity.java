@@ -20,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
             value = "com.example.motordex.AppParsenterImpl",
             level = ParentalEntrustmentLevel.PROJECT)
     AppParsenter ap;
+    @InjectObject(
+            value = "com.example.motordex.AppParsenterImpl",
+            level = ParentalEntrustmentLevel.NEVER)
+    AppParsenter ap2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getStr(View view) {
         String str = ap.getStr();
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        String str2 = str + "--" + ap2.getStr();
+        Toast.makeText(this, str2, Toast.LENGTH_SHORT).show();
     }
 }
