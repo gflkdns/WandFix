@@ -29,6 +29,4 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     compile project(':wand')
     annotationProcessor project(':wand-compiler')
-    implementation project(':motorhot')
-    implementation project(':motorlib')
 }

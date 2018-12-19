@@ -11,6 +11,7 @@ import com.miqt.wand.Wand;
 import com.miqt.wand.anno.InjectObject;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
