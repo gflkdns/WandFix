@@ -60,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
-> 欢迎提出问题和意见。
+具体更多用法请移步[Wiki](https://github.com/miqt/MVPHotFix/wiki)
+
+> 欢迎提出问题和宝贵意见。如果您觉得这个项目还不错，就点个star吧(￣▽￣)~*
 
 
 # 实现原理
