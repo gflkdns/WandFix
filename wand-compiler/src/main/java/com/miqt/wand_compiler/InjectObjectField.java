@@ -62,4 +62,20 @@ public class InjectObjectField {
     public TypeMirror getFieldType() {
         return mVariableElement.asType();
     }
+
+    @Override
+    public int hashCode() {
+        return getResId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        InjectObjectField that = (InjectObjectField) o;
+
+        if (level != that.level) return false;
+        return mresId != null ? mresId.equals(that.mresId) : that.mresId == null;
+    }
 }

@@ -6,8 +6,8 @@ public class AppParsenterImpl implements AppParsenter {
 
     String string;
 
-    public AppParsenterImpl(Integer a, String b, String string) {
-        this.string = "321313";
+    public AppParsenterImpl() {
+        this.string = "aaaa";
     }
 
     @Override

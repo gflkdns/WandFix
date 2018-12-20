@@ -19,26 +19,19 @@ public class MainActivity extends AppCompatActivity {
 
     @InjectObject(
             value = "com.example.motordex.AppParsenterImpl",
-            level = ParentalEntrustmentLevel.PROJECT)
-    AppParsenter ap;
-    @InjectObject(
-            value = "com.example.motordex.AppParsenterImpl",
             level = ParentalEntrustmentLevel.NEVER)
-    AppParsenter ap2;
+    AppParsenter ap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Wand.with(this).init();
-        Map<String, Object[]> map = new HashMap<>();
-        map.put("com.example.motordex.AppParsenterImpl", new Object[]{1, "参数2", "参数3"});
-        ClassInstall.inject(this, map);
+        Wand.with(this).init("hotfix_pack.dex");
+        ClassInstall.inject(this);
     }
 
     public void getStr(View view) {
         String str = ap.getStr();
-        String str2 = str + "--" + ap2.getStr();
-        Toast.makeText(this, str2, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
 }
