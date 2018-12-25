@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+[如何创建并应用热修复包](https://github.com/miqt/WandFix/wiki/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%BA%94%E7%94%A8%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8C%85)
+
 具体更多用法请移步[Wiki](https://github.com/miqt/MVPHotFix/wiki)
 
 > 欢迎提出问题和宝贵意见。如果您觉得这个项目还不错，就点个star吧(￣▽￣)~*
