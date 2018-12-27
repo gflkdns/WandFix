@@ -1,5 +1,7 @@
 package com.example.miqt.dexmvppdemo;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements Wand.MotorListener {
+    ProgressDialog mDialog;
 
     @InjectObject(
             value = "com.example.motordex.AppParsenterImpl",
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
     }
 
     public void fix(View view) {
+        mDialog = ProgressDialog.show(this, "", "修复中...");
         Wand.get().attachPackUrl("https://github.com/miqt/WandFix/raw/master/hotfix_pack.dex");
     }
 
@@ -51,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
 
     @Override
     public void onNewPackAttach(File file) {
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
         Toast.makeText(this, "一个新的修复包被应用！", Toast.LENGTH_SHORT).show();
     }
 }
