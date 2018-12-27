@@ -1,6 +1,8 @@
 
 ## 本项目是一个基于java ClassLoader实现的热修复框架。
 
+![demo预览](./preview/demo.gif)
+
 优点：
 - 类似于黄油刀可以直接对成员变量添加@InjectObject("com.example.motordex.AppParsenterImpl")注解,来绑定热修复包中的实现类。
 - 无需关闭应用即可使修复包生效。
@@ -10,12 +12,12 @@
 - 可以通过注解单独设置某个对象是否禁用双亲委托。
 
 
-使用方法：  
+使用方法：
 ```
 git clone https://github.com/miqt/MVPHotFix.git
 ```
 
-添加依赖：  
+添加依赖：
 
 ```
 compile project(':wand')
@@ -69,42 +71,42 @@ public class MainActivity extends AppCompatActivity {
 
 # 实现原理
 
-核心思想就是Presenter层只写接口，然后使用java的classloader机制加载Presenter层的实现类来产生对象然后赋值给接口指针调用。通过不停的更换classloader所加载的文件，但调用方法一致，来达到热修复的目的。   
+核心思想就是Presenter层只写接口，然后使用java的classloader机制加载Presenter层的实现类来产生对象然后赋值给接口指针调用。通过不停的更换classloader所加载的文件，但调用方法一致，来达到热修复的目的。
 
-下面是我画的一个整体的结构图。  
+下面是我画的一个整体的结构图。
 
-![mvphotfix结构图](https://miqt.github.io/blogimgs/mvp_hot_fix.jpg)    
+![mvphotfix结构图](https://miqt.github.io/blogimgs/mvp_hot_fix.jpg)
 
 <!-- more -->
 
 ## 由来
 
-现在开发android项目大部分都已经由mvc转移到了mvp，关于mvp是什么大致也不必多说了，无非三个层：  
+现在开发android项目大部分都已经由mvc转移到了mvp，关于mvp是什么大致也不必多说了，无非三个层：
 - m：model层，一般封装对数据的操作，增删改查，接口访问等等。
 - v：view层，也就是视图层，视图层不主动做什么，只是根据某些事件作出对应的视图展示。
 - p：Presenter层，也就是逻辑层。
 
-图解(之前在别的博文看到的，觉得比较好就直接拿来用了):  
+图解(之前在别的博文看到的，觉得比较好就直接拿来用了):
 ![MVP](https://upload-images.jianshu.io/upload_images/2413316-e7fe02362c275ddc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700)
 
 
-在mvp模式中，model层和view层不再有直接交互，而把相应的工作交给了“中间人”Presenter层来处理。   
-因此在我们的项目中，Presenter层可以说是一个改动比较频繁，逻辑比较复杂的一个模块。也是较容易出现问题的一个模块，对Presenter层实现热修复，对项目的稳定性是十分有利的。   
+在mvp模式中，model层和view层不再有直接交互，而把相应的工作交给了“中间人”Presenter层来处理。
+因此在我们的项目中，Presenter层可以说是一个改动比较频繁，逻辑比较复杂的一个模块。也是较容易出现问题的一个模块，对Presenter层实现热修复，对项目的稳定性是十分有利的。
 总结一下：
-- 项目背景：mvp的项目。  
-- 需求：在不修改model层和view层的基础上，实现对Presenter层的热修复。  
+- 项目背景：mvp的项目。
+- 需求：在不修改model层和view层的基础上，实现对Presenter层的热修复。
 
 ## 尝试实现
 
-既然大体思路都有了，那么咱们就来尝试一下能不能行得通吧。做一个案例，功能非常简单，界面上一个按钮，点击按钮吐司一个字符串，这个字符串通过。   
+既然大体思路都有了，那么咱们就来尝试一下能不能行得通吧。做一个案例，功能非常简单，界面上一个按钮，点击按钮吐司一个字符串，这个字符串通过。
 
 ###  1.创建项目
-除了一路next之外我这里想说的实际上是项目module结构：  
-![项目结构图](https://miqt.github.io/blogimgs/20180801154218.png)    
+除了一路next之外我这里想说的实际上是项目module结构：
+![项目结构图](https://miqt.github.io/blogimgs/20180801154218.png)
 
 - app里面主要写项目的相关界面。
-- motorlib里面主要写presenter接口和热修复、classloadler等相关的代码，另外model层也可以在里面写，其实它们可以写在app里面，但这样组件化的话，更有利于解耦。  
-- motorhot这里就是写presenter的具体实现了，另外model层也可以在里面写，那样的话对于后台接口返回的数据格式变更等也可以进行修复了。  
+- motorlib里面主要写presenter接口和热修复、classloadler等相关的代码，另外model层也可以在里面写，其实它们可以写在app里面，但这样组件化的话，更有利于解耦。
+- motorhot这里就是写presenter的具体实现了，另外model层也可以在里面写，那样的话对于后台接口返回的数据格式变更等也可以进行修复了。
 
 再设置一下这三个module之间的引用关系。
 
@@ -141,7 +143,7 @@ public interface AppParsenter {
     String getStr();
 }
 ```
-###  3.实现接口persenter接口  
+###  3.实现接口persenter接口
 在motorlib中创建一个java类，实现AppParsenter：
 ```java
 public class AppParsenterImpl implements AppParsenter {
@@ -152,10 +154,10 @@ public class AppParsenterImpl implements AppParsenter {
 }
 ```
 ###  4.热修复文件打包
-在android studio中的右侧，打开Gradle一栏，然后点击（也可以直接运行gradlew命令`gradlew motorhot:assembleRelease`）：  
+在android studio中的右侧，打开Gradle一栏，然后点击（也可以直接运行gradlew命令`gradlew motorhot:assembleRelease`）：
 
-![打包](https://miqt.github.io/blogimgs/20180801160206.png)  
-打包后的jar包文件存放在`.\motorhot\build\intermediates\bundles\release\classes.jar`  
+![打包](https://miqt.github.io/blogimgs/20180801160206.png)
+打包后的jar包文件存放在`.\motorhot\build\intermediates\bundles\release\classes.jar`
 
 拿到打包好的classes.jar,然后使用android sdk提供的dx.bat将jar包转换为dex：
 
@@ -263,11 +265,11 @@ public class Motor {
 }
 ```
 
-单例，首先从assets中把.dex文件拷贝到android的沙盒目录（android加载dex的时候有限制，必须是在沙盒目录中才能加载），然后构建好了mClassLoader就完成了。    
+单例，首先从assets中把.dex文件拷贝到android的沙盒目录（android加载dex的时候有限制，必须是在沙盒目录中才能加载），然后构建好了mClassLoader就完成了。
 
-方便起见，热修复文件就不从网络下载了，因此直接把打包好的.dex拷贝到项目的assets文件夹中。   
+方便起见，热修复文件就不从网络下载了，因此直接把打包好的.dex拷贝到项目的assets文件夹中。
 
-![打包](https://miqt.github.io/blogimgs/20180801165443.png)  
+![打包](https://miqt.github.io/blogimgs/20180801165443.png)
 
 在motorlib中创建ObjectFactory，用来通过classloader生产对象：
 
@@ -294,8 +296,8 @@ public class ObjectFactory {
 
 ###  6.运行
 
-app中新建一个activity，设置一个按钮然后添加点击事件：  
-layout/activity_main.xml  
+app中新建一个activity，设置一个按钮然后添加点击事件：
+layout/activity_main.xml
 ```xml
 <Button
     android:layout_width="wrap_content"
@@ -303,7 +305,7 @@ layout/activity_main.xml
     android:onClick="getStr"
     android:text="获取字符串" />
 ```
-com.example.miqt.dexmvppdemo.MainActivity  
+com.example.miqt.dexmvppdemo.MainActivity
 ```java
 public class MainActivity extends AppCompatActivity {
     AppParsenter ap;
@@ -358,7 +360,7 @@ public class AppParsenterImpl implements AppParsenter {
 2. dex暴露在用户手机沙盒目录中，而android的沙盒目录在root之后是可以直接访问的，因此有可能被人拿到dex反编译，修改逻辑搞破坏。并且因为反射的影响，motorhot中的类文件是不可以进行混淆的，因为混淆之后就会报找不到类的异常。不过关于这个也是有解决办法的，我想到的那就是对热修复文件加密，在loader之前再在内存中解密。这样别人没法知道加密规则，也就没法解密了。
 3. 双亲委托机制，在classloader加载外部dex之前会先检查本地是否已经存在同名的类，如果有则优先加载本地已经存在的类，因此在实际使用中我们最好还要禁用双亲委托机制。
 
-综上，本方案应该是可以在项目中实际应用的一个热修复方案。   
+综上，本方案应该是可以在项目中实际应用的一个热修复方案。
 
 
 > 完整代码：https://github.com/miqt/MVPHotFix
