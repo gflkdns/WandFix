@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Wand.MotorListener {
 
     @InjectObject(
             value = "com.example.motordex.AppParsenterImpl",
@@ -26,12 +26,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Wand.with(this).init();
-        ClassInstall.inject(this);
+        Wand.get().init(this).listener(this);
     }
 
     public void getStr(View view) {
+        ClassInstall.inject(this);
         String str = ap.getStr();
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+    }
+
+    public void fix(View view) {
+        Wand.get().attachPackUrl("https://github.com/miqt/WandFix/raw/master/hotfix_pack.dex");
+    }
+
+    @Override
+    public void initFnish() {
+
+    }
+
+    @Override
+    public void initError(Throwable throwable) {
+
+    }
+
+    @Override
+    public void onNewPackAttach(File file) {
+        Toast.makeText(this, "一个新的修复包被应用！", Toast.LENGTH_SHORT).show();
     }
 }

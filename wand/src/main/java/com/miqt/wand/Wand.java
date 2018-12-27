@@ -4,30 +4,30 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import dalvik.system.DexClassLoader;
 
 /**
  * @author https://github.com/miqt/MVPHotFix
  * @time 2018年12月19日17:34:00
  */
 public class Wand {
+    private static final String CACHE_DEX_PATH = "dex_path";
+
     private static final int FINISH = 0x1;
     private static final int ERROR = 0x2;
-    private Context context;
-    private MotorListener listener;
+    private static final int NEW_PACK_ATTACH = 0x3;
+
+    private Context mContext;
+    private MotorListener mListener;
     private static volatile Wand instance;
     private ClassLoader mClassLoader;
     private Handler mMainHandler;
-    private File dexFile;
-    private Encrypter encrypter;
+    private Encrypter mEncrypter;
 
     private Wand() {
         mMainHandler = new Handler(Looper.getMainLooper()) {
@@ -35,13 +35,18 @@ public class Wand {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case FINISH:
-                        if (listener != null) {
-                            listener.initFnish();
+                        if (mListener != null) {
+                            mListener.initFnish();
                         }
                         break;
                     case ERROR:
-                        if (listener != null) {
-                            listener.initError((Throwable) msg.obj);
+                        if (mListener != null) {
+                            mListener.initError((Throwable) msg.obj);
+                        }
+                        break;
+                    case NEW_PACK_ATTACH:
+                        if (mListener != null) {
+                            mListener.onNewPackAttach((File) msg.obj);
                         }
                         break;
                 }
@@ -60,76 +65,74 @@ public class Wand {
         return instance;
     }
 
-    public static Wand with(Context context) {
-        get().context = context;
-        return get();
+    public Wand init(Context context) {
+        mContext = context;
+        mClassLoader = new MyDexClassLoader(
+                getCachePath(), mContext.getFilesDir().getAbsolutePath()
+                , null, mContext.getClassLoader());
+        Message.obtain(mMainHandler, FINISH).sendToTarget();
+        return this;
     }
 
     public Wand encrypter(Encrypter encrypter) {
-        instance.encrypter = encrypter;
+        instance.mEncrypter = encrypter;
         return get();
     }
 
     public Wand listener(MotorListener listener) {
-        instance.listener = listener;
+        instance.mListener = listener;
         return get();
     }
 
-    public Wand init(String access) {
-        initClassLoader(access);
-        return get();
-    }
-
-    public Wand init() {
-        initClassLoader("wand.dex");
-        return get();
-    }
-
-    public boolean attachDex(File dex) {
-        String dataDir = context.getCacheDir().getAbsolutePath();
-        File file = null;
-        if (!(dex != null && dex.getAbsolutePath().contains(dataDir))) {
-            String dexDir = context.getCacheDir().getAbsolutePath() + "/wand/";
-            File dir = new File(dexDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
+    public void attachPackUrl(final String url) {
+        new Thread() {
+            @Override
+            public void run() {
+                File file = FileUtils.downloadFile(url, getCachePath(), null);
+                attachPack(file);
             }
-            file = new File(dir, "mydex.dex");
-            FileUtils.copyFile(encrypter, context, dex.getAbsolutePath(), file.getAbsolutePath());
-        }
-        ClassLoader lastLoader = mClassLoader;
-        mClassLoader = new MyDexClassLoader(
-                dexFile.getAbsolutePath(), context.getFilesDir().getAbsolutePath()
-                , null, context.getClassLoader());
-        if (mClassLoader != null) {
-            dexFile = file;
-            return true;
-        } else {
-            mClassLoader = lastLoader;
-            return false;
-        }
+        }.start();
     }
 
-    private void initClassLoader(String asset) {
-        String dexDir = context.getCacheDir().getAbsolutePath() + "/dex/";
+    public void attachPackAsset(String asset) {
+        FileUtils.copyFileFromAssets(null, mContext, asset, getCachePath());
+        attachPack(new File(getCachePath()));
+    }
+
+    public void attachPack(File pack) {
+        if (pack == null) {
+            return;
+        }
+        String dataDir = mContext.getCacheDir().getAbsolutePath();
+        File file = null;
+        if (!pack.getAbsolutePath().contains(dataDir) || mEncrypter != null) {
+            file = new File(getCachePath());
+            FileUtils.copyFile(mEncrypter, mContext, pack.getAbsolutePath(), file.getAbsolutePath());
+        } else {
+            file = pack;
+        }
+        mClassLoader = new MyDexClassLoader(
+                file.getAbsolutePath(), mContext.getFilesDir().getAbsolutePath()
+                , null, mContext.getClassLoader());
+        SPUtils.put(mContext, CACHE_DEX_PATH, file.getAbsolutePath());
+        Message.obtain(mMainHandler, NEW_PACK_ATTACH, file).sendToTarget();
+    }
+
+    @NonNull
+    private String getCachePath() {
+        String dex_path = SPUtils.get(mContext, CACHE_DEX_PATH);
+        if (!TextUtils.isEmpty(dex_path)) {
+            return dex_path;
+        }
+        String dexDir = mContext.getCacheDir().getAbsolutePath() + "/wand/";
         File dir = new File(dexDir);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        dexFile = new File(dir, "wand.dex");
-        if (!(dexFile.exists() && dexFile.isFile() && dexFile.length() > 0)) {
-            FileUtils.copyFileFromAssets(encrypter, context, asset, dexFile.getAbsolutePath());
-        }
-        mClassLoader = new MyDexClassLoader(
-                dexFile.getAbsolutePath(), context.getFilesDir().getAbsolutePath()
-                , null, context.getClassLoader());
-        if (mClassLoader == null) {
-            Message.obtain(mMainHandler, ERROR, new IllegalStateException("dex file damage."));
-        } else {
-            Message.obtain(mMainHandler, FINISH);
-        }
+        File file = new File(dir, "wand.dex");
+        SPUtils.put(mContext, CACHE_DEX_PATH, file.getAbsolutePath());
+        return file.getAbsolutePath();
     }
-
 
     public Class<?> loadClass(String classname, ParentalEntrustmentLevel level) throws ClassNotFoundException {
         MyDexClassLoader loader = (MyDexClassLoader) mClassLoader;
@@ -138,7 +141,7 @@ public class Wand {
     }
 
     public Context getContext() {
-        return context;
+        return mContext;
     }
 
 
@@ -146,5 +149,7 @@ public class Wand {
         void initFnish();
 
         void initError(Throwable throwable);
+
+        void onNewPackAttach(File file);
     }
 }
