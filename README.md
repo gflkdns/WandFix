@@ -158,6 +158,7 @@ public class AppParsenterImpl implements AppParsenter {
 在android studio中的右侧，打开Gradle一栏，然后点击（也可以直接运行gradlew命令`gradlew motorhot:assembleRelease`）：
 
 ![打包](https://miqt.github.io/blogimgs/20180801160206.png)
+
 打包后的jar包文件存放在`.\motorhot\build\intermediates\bundles\release\classes.jar`
 
 拿到打包好的classes.jar,然后使用android sdk提供的dx.bat将jar包转换为dex：
