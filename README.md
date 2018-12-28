@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
 ###  1.创建项目
 除了一路next之外我这里想说的实际上是项目module结构：
+
 ![项目结构图](https://miqt.github.io/blogimgs/20180801154218.png)
 
 - app里面主要写项目的相关界面。
@@ -333,7 +334,11 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 运行结果：
+
+
 ![打包](https://miqt.github.io/blogimgs/Screenshot_2018-08-01-17-11-50-936_com.example.mi.png)
+
+
 修改motorhot中的AppParsenterImpl，模拟修复了一个bug：
 ```java
 public class AppParsenterImpl implements AppParsenter {
@@ -345,6 +350,8 @@ public class AppParsenterImpl implements AppParsenter {
 ```
 
 重复4步骤，打包运行：
+
+
 ![打包](https://miqt.github.io/blogimgs/Screenshot_2018-08-01-17-37-41-820_com.example.mi.png)
 
 
