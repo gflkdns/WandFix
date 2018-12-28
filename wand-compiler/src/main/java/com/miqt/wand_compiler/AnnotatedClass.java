@@ -49,8 +49,8 @@ public class AnnotatedClass {
             injectMethod.addStatement("host.$N = ($T)(provider.make(source, \"$L\" ,$L))",
                     field.getFieldName(),
                     ClassName.get(field.getFieldType()),
-                    field.getResId(),
-                    field.getLevel());
+                    field.getClassName(),
+                    field.getmLevel());
         }
 
         //generaClass

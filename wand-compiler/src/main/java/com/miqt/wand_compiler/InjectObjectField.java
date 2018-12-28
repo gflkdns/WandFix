@@ -11,12 +11,12 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
 public class InjectObjectField {
-    private final ParentalEntrustmentLevel level;
+    private final ParentalEntrustmentLevel mLevel;
     private VariableElement mVariableElement;
-    private String mresId;
+    private String mClassName;
 
-    public ParentalEntrustmentLevel getLevel() {
-        return level;
+    public ParentalEntrustmentLevel getmLevel() {
+        return mLevel;
     }
 
     public InjectObjectField(Element element) throws IllegalArgumentException {
@@ -26,10 +26,10 @@ public class InjectObjectField {
         }
         mVariableElement = (VariableElement) element;
 
-        InjectObject bindView = mVariableElement.getAnnotation(InjectObject.class);
-        mresId = bindView.value();
-        level = bindView.level();
-        if (mresId == null) {
+        InjectObject injectOvject = mVariableElement.getAnnotation(InjectObject.class);
+        mClassName = injectOvject.value();
+        mLevel = injectOvject.level();
+        if (mClassName == null) {
             throw new IllegalArgumentException(
                     String.format("value() in %s for field %s is not valid !", InjectObject.class.getSimpleName(),
                             mVariableElement.getSimpleName()));
@@ -50,8 +50,8 @@ public class InjectObjectField {
      *
      * @return
      */
-    public String getResId() {
-        return mresId;
+    public String getClassName() {
+        return mClassName;
     }
 
     /**
@@ -65,7 +65,7 @@ public class InjectObjectField {
 
     @Override
     public int hashCode() {
-        return getResId().hashCode();
+        return getClassName().hashCode();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class InjectObjectField {
 
         InjectObjectField that = (InjectObjectField) o;
 
-        if (level != that.level) return false;
-        return mresId != null ? mresId.equals(that.mresId) : that.mresId == null;
+        if (mLevel != that.mLevel) return false;
+        return mClassName != null ? mClassName.equals(that.mClassName) : that.mClassName == null;
     }
 }

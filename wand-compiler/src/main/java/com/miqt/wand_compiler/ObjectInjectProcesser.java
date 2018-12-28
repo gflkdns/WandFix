@@ -3,7 +3,6 @@ package com.miqt.wand_compiler;
 import com.google.auto.service.AutoService;
 import com.miqt.wand.anno.InjectObject;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,7 +75,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
                 .append("jar cvf hotfix_pack.jar ");
         for (InjectObjectField field : fieldSet) {
             builder.append("./")
-                    .append(field.getResId().replace('.', '/'))
+                    .append(field.getClassName().replace('.', '/'))
                     .append(".class");
         }
         builder.append("\n");

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author https://github.com/miqt/MVPHotFix
+ * @author https://github.com/miqt/WandFix
  * @time 2018年12月19日17:35:40
  */
 public class ClassInstall {

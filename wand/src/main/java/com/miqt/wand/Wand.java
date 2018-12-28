@@ -12,7 +12,7 @@ import com.miqt.wand.anno.ParentalEntrustmentLevel;
 import java.io.File;
 
 /**
- * @author https://github.com/miqt/MVPHotFix
+ * @author https://github.com/miqt/WandFix
  * @time 2018年12月19日17:34:00
  */
 public class Wand {

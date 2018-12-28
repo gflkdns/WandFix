@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * @author https://github.com/miqt/MVPHotFix
+ * @author https://github.com/miqt/WandFix
  * @time 2018年12月19日17:35:31
  */
 public interface Encrypter {
