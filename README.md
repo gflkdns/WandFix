@@ -1,4 +1,6 @@
+# WandFix
 
+## About
 
 当你的项目已经上线，一个BUG被发现却已经为时已晚，这时候悔恨自责都已经于事无补，甚至还会被伙伴们打上不靠谱的标签，这时候你想不想像哈利波特一样，魔法杖一挥BUG瞬间消除，没错拿着WindFix你就可以实现这一点。
 
@@ -19,8 +21,8 @@ WandFix是一个基于Java ClassLoader实现的热修复框架。
 - 可以自己配置dex加密算法，保护dex文件的安全。
 - 可以通过注解单独设置某个对象是否禁用双亲委托。
 
+## 使用方法：
 
-使用方法：
 ```
 git clone https://github.com/miqt/WandFix.git
 ```
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+## Other
 
 [如何创建并应用热修复包](https://github.com/miqt/WandFix/wiki/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%BA%94%E7%94%A8%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8C%85)
 
