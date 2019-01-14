@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * 热修复包解码器
+ *
  * @author https://github.com/miqt/WandFix
  * @time 2018年12月19日17:35:31
  */

@@ -38,7 +38,8 @@ class MyDexClassLoader extends DexClassLoader {
             Class<?> findClass = null;
             try {
                 findClass = findClass(name);
-            } catch (Exception e) { //还可以从父类查找，这个异常吞掉，如果没有父类会抛出
+            } catch (Exception e) {
+                //还可以从父类查找，这个异常吞掉，如果没有父类会抛出
             }
             if (findClass != null) {
                 classMap.put(name, findClass);
