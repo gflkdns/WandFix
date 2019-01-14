@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
     }
 
     @Override
-    public void initFnish() {
+    public void initFinish() {
 
     }
 

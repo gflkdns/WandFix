@@ -1,7 +1,7 @@
 package com.miqt.wand.anno;
 
 /**
- * Created by t54 on 2018/12/19.
+ * Created by miqt on 2018/12/19.
  */
 
 public enum ParentalEntrustmentLevel {

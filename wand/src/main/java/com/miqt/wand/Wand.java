@@ -22,9 +22,10 @@ public class Wand {
     private static final int ERROR = 0x2;
     private static final int NEW_PACK_ATTACH = 0x3;
 
+    private static volatile Wand instance;
+
     private Context mContext;
     private MotorListener mListener;
-    private static volatile Wand instance;
     private ClassLoader mClassLoader;
     private Handler mMainHandler;
     private Encrypter mEncrypter;
@@ -36,7 +37,7 @@ public class Wand {
                 switch (msg.what) {
                     case FINISH:
                         if (mListener != null) {
-                            mListener.initFnish();
+                            mListener.initFinish();
                         }
                         break;
                     case ERROR:
@@ -65,6 +66,11 @@ public class Wand {
         return instance;
     }
 
+    /**
+     * 初始化
+     * @param context 最好不要传具体某个activity，可能引发内存泄漏
+     * @return Wand
+     */
     public Wand init(Context context) {
         mContext = context;
         mClassLoader = new MyDexClassLoader(
@@ -146,7 +152,7 @@ public class Wand {
 
 
     public interface MotorListener {
-        void initFnish();
+        void initFinish();
 
         void initError(Throwable throwable);
 
