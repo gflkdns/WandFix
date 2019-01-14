@@ -46,7 +46,7 @@ public class InjectObjectField {
     }
 
     /**
-     * 获取变量id
+     * 获取类全名
      *
      * @return
      */
