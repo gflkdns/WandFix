@@ -45,11 +45,7 @@ public class InjectObjectField {
         return mVariableElement.getSimpleName();
     }
 
-    /**
-     * 获取类全名
-     *
-     * @return
-     */
+
     public String getClassName() {
         return mClassName;
     }

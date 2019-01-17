@@ -1,6 +1,7 @@
 package com.miqt.wand_compiler;
 
 import com.google.auto.service.AutoService;
+import com.miqt.wand.anno.AddToFixPatch;
 import com.miqt.wand.anno.InjectObject;
 
 import java.io.FileNotFoundException;
@@ -20,6 +21,7 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
@@ -30,7 +32,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
     private Filer mFiler; //文件相关的辅助类
     private Elements mElementUtils; //元素相关的辅助类
     private Messager mMessager; //日志相关的辅助类
-    private Set<InjectObjectField> fieldSet;
+    private Set<String> fieldSet;
 
     private Map<String, AnnotatedClass> mAnnotatedClassMap;
 
@@ -50,6 +52,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
 
         try {
             processInjectClass(roundEnv);
+            processAddToFixPatch(roundEnv);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             error(e.getMessage());
@@ -66,6 +69,17 @@ public class ObjectInjectProcesser extends AbstractProcessor {
         return true;
     }
 
+    private void processAddToFixPatch(RoundEnvironment roundEnv) throws IllegalArgumentException {
+        for (Element element : roundEnv.getElementsAnnotatedWith(AddToFixPatch.class)) {
+            if (element.getKind() != ElementKind.CLASS) {
+                throw new IllegalArgumentException(String.format("Only java class can be annotated with @%s",
+                        AddToFixPatch.class.getSimpleName()));
+            }
+            TypeElement element1 = (TypeElement) element;
+            fieldSet.add(element1.getQualifiedName().toString());
+        }
+    }
+
     private void makePack() {
         if (fieldSet.isEmpty()) {
             return;
@@ -73,9 +87,9 @@ public class ObjectInjectProcesser extends AbstractProcessor {
         StringBuilder builder = new StringBuilder();
         builder.append("cd ./app/build/intermediates/classes/debug/").append("\n")
                 .append("jar cvf hotfix_pack.jar ");
-        for (InjectObjectField field : fieldSet) {
-            builder.append("./")
-                    .append(field.getClassName().replace('.', '/'))
+        for (String className : fieldSet) {
+            builder.append(" ./")
+                    .append(className.replace('.', '/'))
                     .append(".class");
         }
         builder.append("\n");
@@ -97,7 +111,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
             AnnotatedClass annotatedClass = getAnnotatedClass(element);
             InjectObjectField fieid = new InjectObjectField(element);
             annotatedClass.addField(fieid);
-            fieldSet.add(fieid);
+            fieldSet.add(fieid.getClassName());
         }
     }
 
@@ -128,6 +142,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new LinkedHashSet<>();
         types.add(InjectObject.class.getCanonicalName());
+        types.add(AddToFixPatch.class.getCanonicalName());
         return types;
     }
 

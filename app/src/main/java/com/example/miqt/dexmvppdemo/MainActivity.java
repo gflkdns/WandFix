@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.example.motorlib.AppParsenter;
 import com.miqt.wand.ClassInstall;
 import com.miqt.wand.Wand;
+import com.miqt.wand.anno.AddToFixPatch;
 import com.miqt.wand.anno.InjectObject;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
@@ -17,6 +18,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+@AddToFixPatch
 public class MainActivity extends AppCompatActivity implements Wand.MotorListener {
     ProgressDialog mDialog;
 
