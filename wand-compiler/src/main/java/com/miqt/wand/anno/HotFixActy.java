@@ -1,9 +1,7 @@
 package com.miqt.wand.anno;
 
-public @interface InjectObject {
-    //class name
-    String value();
 
+public @interface HotFixActy {
     ParentalEntrustmentLevel level()
             default ParentalEntrustmentLevel.NEVER;
 }

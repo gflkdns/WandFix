@@ -1,9 +1,7 @@
 package com.miqt.wand.anno;
 
-public @interface InjectObject {
-    //class name
-    String value();
 
+public @interface HotFixActy {
     /**
      * 双亲委托禁用级别
      * 本地开发期间一般用ParentalEntrustmentLevel.PROJECT

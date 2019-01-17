@@ -1,6 +1,7 @@
 package com.miqt.wand_compiler;
 
 import com.google.auto.service.AutoService;
+import com.miqt.wand.anno.HotFixActy;
 import com.miqt.wand.anno.InjectObject;
 
 import java.io.FileNotFoundException;
@@ -30,7 +31,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
     private Filer mFiler; //文件相关的辅助类
     private Elements mElementUtils; //元素相关的辅助类
     private Messager mMessager; //日志相关的辅助类
-    private Set<InjectObjectField> fieldSet;
+    private Set<String> fieldSet;
 
     private Map<String, AnnotatedClass> mAnnotatedClassMap;
 
@@ -48,13 +49,15 @@ public class ObjectInjectProcesser extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         mAnnotatedClassMap.clear();
 
+
         try {
             processInjectClass(roundEnv);
+            processHotFixActy(roundEnv);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             error(e.getMessage());
         }
-
+        //生成注解对应的类
         for (AnnotatedClass annotatedClass : mAnnotatedClassMap.values()) {
             try {
                 annotatedClass.generateFile().writeTo(mFiler);
@@ -66,6 +69,13 @@ public class ObjectInjectProcesser extends AbstractProcessor {
         return true;
     }
 
+    private void processHotFixActy(RoundEnvironment roundEnv) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(HotFixActy.class)) {
+            TypeElement element1= (TypeElement) element;
+            fieldSet.add(element1.getQualifiedName().toString());
+        }
+    }
+
     private void makePack() {
         if (fieldSet.isEmpty()) {
             return;
@@ -73,9 +83,9 @@ public class ObjectInjectProcesser extends AbstractProcessor {
         StringBuilder builder = new StringBuilder();
         builder.append("cd ./app/build/intermediates/classes/debug/").append("\n")
                 .append("jar cvf hotfix_pack.jar ");
-        for (InjectObjectField field : fieldSet) {
-            builder.append("./")
-                    .append(field.getClassName().replace('.', '/'))
+        for (String className : fieldSet) {
+            builder.append(" ./")
+                    .append(className.replace('.', '/'))
                     .append(".class");
         }
         builder.append("\n");
@@ -97,7 +107,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
             AnnotatedClass annotatedClass = getAnnotatedClass(element);
             InjectObjectField fieid = new InjectObjectField(element);
             annotatedClass.addField(fieid);
-            fieldSet.add(fieid);
+            fieldSet.add(fieid.getClassName());
         }
     }
 
@@ -128,6 +138,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> types = new LinkedHashSet<>();
         types.add(InjectObject.class.getCanonicalName());
+        types.add(HotFixActy.class.getCanonicalName());
         return types;
     }
 

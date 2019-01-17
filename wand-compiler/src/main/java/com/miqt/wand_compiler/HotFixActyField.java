@@ -10,7 +10,7 @@ import javax.lang.model.element.Name;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
-public class InjectObjectField {
+public class HotFixActyField {
     private final ParentalEntrustmentLevel mLevel;
     private VariableElement mVariableElement;
     private String mClassName;
@@ -19,9 +19,9 @@ public class InjectObjectField {
         return mLevel;
     }
 
-    public InjectObjectField(Element element) throws IllegalArgumentException {
-        if (element.getKind() != ElementKind.FIELD) {
-            throw new IllegalArgumentException(String.format("Only fields can be annotated with @%s",
+    public HotFixActyField(Element element) throws IllegalArgumentException {
+        if (element.getKind() != ElementKind.CLASS) {
+            throw new IllegalArgumentException(String.format("Only java class can be annotated with @%s",
                     InjectObject.class.getSimpleName()));
         }
         mVariableElement = (VariableElement) element;
@@ -68,7 +68,7 @@ public class InjectObjectField {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        InjectObjectField that = (InjectObjectField) o;
+        HotFixActyField that = (HotFixActyField) o;
 
         if (mLevel != that.mLevel) return false;
         return mClassName != null ? mClassName.equals(that.mClassName) : that.mClassName == null;

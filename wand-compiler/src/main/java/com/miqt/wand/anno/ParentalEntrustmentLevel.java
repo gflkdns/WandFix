@@ -1,13 +1,15 @@
 package com.miqt.wand.anno;
 
-/**
- * Created by miqt on 2018/12/19.
- * 双亲委托级别
- */
+
 
 public enum ParentalEntrustmentLevel {
+    /**
+     * 禁用双亲委托
+     */
     NEVER,
     PROJECT,
+    @Deprecated
     ANDROID,
+    @Deprecated
     JAVA
 }
