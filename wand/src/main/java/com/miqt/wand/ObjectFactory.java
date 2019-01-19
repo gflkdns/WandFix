@@ -5,6 +5,9 @@ import com.miqt.wand.anno.ParentalEntrustmentLevel;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ObjectFactory {
 
@@ -51,20 +54,25 @@ public class ObjectFactory {
     public static <T> T make(String classname, ParentalEntrustmentLevel level, Object... pram) {
         try {
             Class<T> ap = (Class<T>) Wand.get().loadClass(classname, level);
-            T o = null;
-            if (pram.length == 0) {
-                Constructor<T> constructor = ap.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                o = constructor.newInstance();
-            } else {
-                Class[] aClass = new Class[pram.length];
-                for (int i = 0; i < aClass.length; i++) {
-                    aClass[i] = pram[i].getClass();
+            Class[] aClass = null;
+            Constructor<?>[] constructors = ap.getDeclaredConstructors();
+            for (int i = 0; i < constructors.length; i++) {
+                aClass = constructors[i].getParameterTypes();
+                if (aClass.length != pram.length) {
+                    continue;
                 }
-                Constructor<T> constructor = ap.getDeclaredConstructor(aClass);
-                constructor.setAccessible(true);
-                o = constructor.newInstance(pram);
+                //识别是不是正确的构造方法
+                for (int j = 0; j < aClass.length; j++) {
+                    List<Class> baseClassList = getBaseClass(pram[i].getClass());
+                    if (!baseClassList.contains(aClass[i])) {
+                        aClass = null;
+                        break;
+                    }
+                }
             }
+            Constructor<T> constructor = ap.getDeclaredConstructor(aClass);
+            constructor.setAccessible(true);
+            T o = constructor.newInstance(pram);
             return o;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -78,5 +86,34 @@ public class ObjectFactory {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static List<Class> getBaseClass(Class clazz) {
+        List<Class> result = new LinkedList<>();
+        result.addAll(getSuperClass(clazz));
+        result.addAll(getInterfaces(clazz));
+        return result;
+    }
+
+    private static List<Class> getInterfaces(Class clazz) {
+        List<Class> result = new LinkedList<>();
+        if (clazz == null) {
+            return result;
+        }
+        Class[] classes = clazz.getInterfaces();
+        result.addAll(Arrays.asList(classes));
+        for (int i = 0; i < classes.length; i++) {
+            result.addAll(getInterfaces(classes[i]));
+        }
+        return result;
+    }
+
+    private static List<Class> getSuperClass(Class clazz) {
+        List<Class> result = new LinkedList<>();
+        while (clazz != null) {
+            result.add(clazz);
+            clazz = clazz.getSuperclass();
+        }
+        return result;
     }
 }

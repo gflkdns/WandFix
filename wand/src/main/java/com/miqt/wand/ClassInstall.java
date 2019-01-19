@@ -24,8 +24,11 @@ public class ClassInstall {
     private static void inject(Object host, Object object, Provider provider) {
         String className = host.getClass().getName();
         try {
-            Inject inject = injectMap.get(className).get();
-
+            SoftReference<Inject> reference = injectMap.get(className);
+            Inject inject = null;
+            if (reference != null) {
+                inject = reference.get();
+            }
             if (inject == null) {
                 Class<?> aClass = Wand.get().getContext().getClassLoader().loadClass(className + "$$ObjectInject");
                 inject = (Inject) aClass.newInstance();
