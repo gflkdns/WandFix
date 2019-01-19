@@ -6,10 +6,23 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ObjectFactory {
+    private final static HashMap<Class, String> mapMemberClass = new HashMap<Class, String>(8);
+
+    static {
+        mapMemberClass.put(Integer.class, "int");
+        mapMemberClass.put(Double.class, "double");
+        mapMemberClass.put(Float.class, "float");
+        mapMemberClass.put(Character.class, "char");
+        mapMemberClass.put(Boolean.class, "boolean");
+        mapMemberClass.put(Short.class, "short");
+        mapMemberClass.put(Long.class, "long");
+        mapMemberClass.put(Byte.class, "byte");
+    }
 
     public static <T> T invokeStaticMethod(String classname, String methodName,
                                            ParentalEntrustmentLevel level, Object... pram) {
@@ -54,23 +67,29 @@ public class ObjectFactory {
     public static <T> T make(String classname, ParentalEntrustmentLevel level, Object... pram) {
         try {
             Class<T> ap = (Class<T>) Wand.get().loadClass(classname, level);
-            Class[] aClass = null;
-            Constructor<?>[] constructors = ap.getDeclaredConstructors();
+            Constructor<T>[] constructors = (Constructor<T>[]) ap.getDeclaredConstructors();
+            Constructor<T> constructor = null;
             for (int i = 0; i < constructors.length; i++) {
-                aClass = constructors[i].getParameterTypes();
+                Class[] aClass = constructors[i].getParameterTypes();
                 if (aClass.length != pram.length) {
                     continue;
                 }
                 //识别是不是正确的构造方法
+                boolean found = true;
                 for (int j = 0; j < aClass.length; j++) {
-                    List<Class> baseClassList = getBaseClass(pram[i].getClass());
-                    if (!baseClassList.contains(aClass[i])) {
-                        aClass = null;
-                        break;
+                    List<String> baseClassList = getBaseClass(pram[j].getClass());
+                    if (!baseClassList.contains(aClass[j].getName())) {
+                        found = false;
                     }
                 }
+                if (found) {
+                    constructor = constructors[i];
+                    break;
+                }
             }
-            Constructor<T> constructor = ap.getDeclaredConstructor(aClass);
+            if (constructor == null) {
+                throw new IllegalArgumentException("[" + classname + "]" + "not has parameter type constructor");
+            }
             constructor.setAccessible(true);
             T o = constructor.newInstance(pram);
             return o;
@@ -80,38 +99,42 @@ public class ObjectFactory {
             e.printStackTrace();
         } catch (InstantiationException e) {
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static List<Class> getBaseClass(Class clazz) {
-        List<Class> result = new LinkedList<>();
+    private static List<String> getBaseClass(Class clazz) {
+        List<String> result = new LinkedList<>();
         result.addAll(getSuperClass(clazz));
         result.addAll(getInterfaces(clazz));
         return result;
     }
 
-    private static List<Class> getInterfaces(Class clazz) {
-        List<Class> result = new LinkedList<>();
+    private static List<String> getInterfaces(Class clazz) {
+        List<String> result = new LinkedList<>();
         if (clazz == null) {
             return result;
         }
         Class[] classes = clazz.getInterfaces();
-        result.addAll(Arrays.asList(classes));
+        for (int i = 0; i < classes.length; i++) {
+            result.add(classes[i].getName());
+        }
         for (int i = 0; i < classes.length; i++) {
             result.addAll(getInterfaces(classes[i]));
         }
         return result;
     }
 
-    private static List<Class> getSuperClass(Class clazz) {
-        List<Class> result = new LinkedList<>();
+    private static List<String> getSuperClass(Class clazz) {
+        List<String> result = new LinkedList<>();
         while (clazz != null) {
-            result.add(clazz);
+            String name = mapMemberClass.get(clazz);
+            if (name != null) {
+                result.add(name);
+            }
+            result.add(clazz.getName());
             clazz = clazz.getSuperclass();
         }
         return result;
