@@ -14,12 +14,15 @@ public class AppParsenterImpl implements AppParsenter {
         this.name = name + "String";
     }
 
+    public AppParsenterImpl() {
+    }
+
     public AppParsenterImpl(Comparable name) {
         this.name = (String) name + "Comparable";
     }
 
     @Override
     public String getStr() {
-        return name;
+        return name.toLowerCase();
     }
 }

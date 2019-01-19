@@ -35,9 +35,7 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
     }
 
     public void getStr(View view) {
-        Map<String, Object[]> map = new HashMap<>();
-        map.put("com.example.motordex.AppParsenterImpl", new Object[]{new String("name"),1});
-        ClassInstall.inject(this, map);
+        ClassInstall.inject(this);
         String str = ap.getStr();
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
