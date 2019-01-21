@@ -31,28 +31,31 @@ public class ObjectFactory {
 
     public static <T> T invokeMethod(Object object, String classname, String methodName,
                                      ParentalEntrustmentLevel level, Object... pram) {
+        if (classname == null || methodName == null || classname.length() == 0 || methodName.length() == 0) {
+            return null;
+        }
+        if (level == null) {
+            level = ParentalEntrustmentLevel.NEVER;
+        }
         try {
             Class<T> ap = (Class<T>) Wand.get().loadClass(classname, level);
-            T o = null;
-            if (pram.length == 0) {
-                Method method = ap.getDeclaredMethod(methodName);
-                method.setAccessible(true);
-                o = (T) method.invoke(object);
-            } else {
-                Class[] aClass = new Class[pram.length];
-                for (int i = 0; i < aClass.length; i++) {
-                    aClass[i] = pram[i].getClass();
+            Method[] methods = ap.getDeclaredMethods();
+            Method method = null;
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals(methodName)
+                        && isFound(methods[i].getParameterTypes(), pram)) {
+                    method = methods[i];
+                    break;
                 }
-                Method method = ap.getDeclaredMethod(methodName, aClass);
-                method.setAccessible(true);
-                o = (T) method.invoke(object, pram);
             }
-            return o;
+            if (method == null) {
+                throw new IllegalArgumentException("[" + classname + "." + methodName + "]" + "No function found corresponding to the parameter type");
+            }
+            method.setAccessible(true);
+            return (T) method.invoke(object,pram);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
@@ -71,18 +74,8 @@ public class ObjectFactory {
             Constructor<T> constructor = null;
             for (int i = 0; i < constructors.length; i++) {
                 Class[] aClass = constructors[i].getParameterTypes();
-                if (aClass.length != pram.length) {
-                    continue;
-                }
                 //识别是不是正确的构造方法
-                boolean found = true;
-                for (int j = 0; j < aClass.length; j++) {
-                    List<String> baseClassList = getBaseClass(pram[j].getClass());
-                    if (!baseClassList.contains(aClass[j].getName())) {
-                        found = false;
-                    }
-                }
-                if (found) {
+                if (isFound(aClass, pram)) {
                     constructor = constructors[i];
                     break;
                 }
@@ -103,6 +96,29 @@ public class ObjectFactory {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 根据参数类型判断是否跟Class[] 是从属关系
+     *
+     * @param aClass
+     * @param pram
+     * @return
+     */
+    private static boolean isFound(Class[] aClass, Object[] pram) {
+        if (aClass == null || pram == null) {
+            return false;
+        }
+        if (aClass.length != pram.length) {
+            return false;
+        }
+        for (int j = 0; j < aClass.length; j++) {
+            List<String> baseClassList = getBaseClass(pram[j].getClass());
+            if (!baseClassList.contains(aClass[j].getName())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static List<String> getBaseClass(Class clazz) {
