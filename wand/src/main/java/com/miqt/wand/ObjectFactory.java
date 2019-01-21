@@ -52,7 +52,7 @@ public class ObjectFactory {
                 throw new IllegalArgumentException("[" + classname + "." + methodName + "]" + "No function found corresponding to the parameter type");
             }
             method.setAccessible(true);
-            return (T) method.invoke(object,pram);
+            return (T) method.invoke(object, pram);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -68,6 +68,12 @@ public class ObjectFactory {
     }
 
     public static <T> T make(String classname, ParentalEntrustmentLevel level, Object... pram) {
+        if (classname == null || classname.length() == 0) {
+            return null;
+        }
+        if (level == null) {
+            level = ParentalEntrustmentLevel.NEVER;
+        }
         try {
             Class<T> ap = (Class<T>) Wand.get().loadClass(classname, level);
             Constructor<T>[] constructors = (Constructor<T>[]) ap.getDeclaredConstructors();
