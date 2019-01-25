@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.motorlib.AppParsenter;
 import com.miqt.wand.ClassInstall;
+import com.miqt.wand.ObjectFactory;
 import com.miqt.wand.Wand;
 import com.miqt.wand.anno.AddToFixPatch;
 import com.miqt.wand.anno.InjectObject;
@@ -35,7 +36,10 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
     }
 
     public void getStr(View view) {
+        //使用注解注入对象必须要调用这一行
         ClassInstall.inject(this);
+        //也可以不使用注解注入的方式初始化对象
+        //ap= ObjectFactory.make("com.example.motordex.AppParsenterImpl"/*,构造参数*/);
         String str = ap.getStr();
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }

@@ -29,6 +29,19 @@ public class ObjectFactory {
         return invokeMethod(null, classname, methodName, level, pram);
     }
 
+    public static <T> T invokeStaticMethod(Class clazz, String methodName,
+                                           ParentalEntrustmentLevel level, Object... pram) {
+        return invokeMethod(null, clazz.getName(), methodName, level, pram);
+    }
+
+    public static <T> T invokeStaticMethod(Class clazz, String methodName, Object... pram) {
+        return invokeMethod(null, clazz.getName(), methodName, ParentalEntrustmentLevel.NEVER, pram);
+    }
+
+    public static <T> T invokeStaticMethod(String classname, String methodName, Object... pram) {
+        return invokeMethod(null, classname, methodName, ParentalEntrustmentLevel.NEVER, pram);
+    }
+
     public static <T> T invokeMethod(Object object, String classname, String methodName,
                                      ParentalEntrustmentLevel level, Object... pram) {
         if (classname == null || methodName == null || classname.length() == 0 || methodName.length() == 0) {

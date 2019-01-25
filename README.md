@@ -23,6 +23,8 @@ WandFix是一个基于Java ClassLoader实现的热修复框架。
 - 可以自己配置dex加密算法，保护dex文件的安全。
 - 可以通过注解单独设置某个对象是否禁用双亲委托。
 
+目前只支持java类文件的替换，资源文件及布局文件替换相关正在研究中，后续会支持。
+
 ## 使用方法：
 
 ```
@@ -65,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         //Map<String, Object[]> map = new HashMap<>();
         //map.put("com.example.motordex.AppParsenterImpl2", new Object[]{1, "参数2", "参数3"});
         //ClassInstall.inject(this, map);
+
+        //也可以不使用注解注入的方式初始化对象
+        //ap= ObjectFactory.make("com.example.motordex.AppParsenterImpl"/*,构造参数*/);
 
         //调用
         String str = ap.getStr();
