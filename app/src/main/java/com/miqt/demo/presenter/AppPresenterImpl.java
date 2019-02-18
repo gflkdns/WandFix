@@ -1,4 +1,6 @@
-package com.miqt.demo;
+package com.miqt.demo.presenter;
+
+import com.miqt.demo.AppPresenter;
 
 /**
  * Created by miqt on 2019/2/18.
@@ -20,6 +22,7 @@ public class AppPresenterImpl implements AppPresenter {
     }
 
     public AppPresenterImpl() {
+       name = "bug 修复啦！";
     }
 
     @Override

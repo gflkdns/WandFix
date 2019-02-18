@@ -1,5 +1,5 @@
 package com.miqt.demo;
 
-interface AppPresenter {
+public interface AppPresenter {
     String getStr();
 }

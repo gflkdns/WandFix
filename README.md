@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
 
     @InjectObject(
             //指向类的全名
-            value = "com.miqt.demo.AppPresenterImpl",
+            value = "com.miqt.demo.presenter.AppPresenterImpl",
             //设置双亲委托
             //项目开发中建议使用PROJECT，优先应用本地类库。
             //项目发布时，应修改为NEVER，优先应用热修复包中的类库。
@@ -65,11 +65,11 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
         ClassInstall.inject(this);
         //或者带参数的构造方法
         //Map<String, Object[]> pramHouse=new HashMap<>();
-        //pramHouse.put("com.miqt.demo.AppPresenterImpl",new Object[]{"hello"});
+        //pramHouse.put("com.miqt.demo.presenter.AppPresenterImpl",new Object[]{"hello"});
         //ClassInstall.inject(this,pramHouse);
 
         //也可以不使用注解注入的方式初始化对象
-        //ap= ObjectFactory.make("com.miqt.demo.AppPresenterImpl"/*,构造参数*/);
+        //ap= ObjectFactory.make("com.miqt.demo.presenter.AppPresenterImpl"/*,构造参数*/);
         //ap= ObjectFactory.make(AppPresenterImpl.class/*,构造参数*/);
 
         String str = ap.getStr();
