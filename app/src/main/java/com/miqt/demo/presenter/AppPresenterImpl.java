@@ -22,7 +22,6 @@ public class AppPresenterImpl implements AppPresenter {
     }
 
     public AppPresenterImpl() {
-       name = "bug 修复啦！";
     }
 
     @Override
