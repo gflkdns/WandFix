@@ -41,42 +41,48 @@ annotationProcessor project(':wand-compiler')
 
 
 ```java
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Wand.MotorListener {
 
     @InjectObject(
-        "com.example.motordex.AppParsenterImpl2"//热修复包中的实现类
-            )
-    AppParsenter ap;
-
-    @InjectObject(
-            value = "com.example.motordex.AppParsenterImpl2",//热修复包中的实现类
-            level = ParentalEntrustmentLevel.PROJECT//启用双亲委托，优先加载本地类
-            )
-    AppParsenter ap;
+            //指向类的全名
+            value = "com.miqt.demo.AppPresenterImpl",
+            //设置双亲委托
+            //项目开发中建议使用PROJECT，优先应用本地类库。
+            //项目发布时，应修改为NEVER，优先应用热修复包中的类库。
+            level = ParentalEntrustmentLevel.NEVER)
+    AppPresenter ap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ...
-        //初始化，可以放在application中调用一次即可
-        Wand.init(this);
-        //单个参数
-        ClassInstall.inject(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //可以在application中初始化一次即可
+        Wand.get().init(this).listener(this);
+    }
 
-        //多个参数的构造方法
-        //Map<String, Object[]> map = new HashMap<>();
-        //map.put("com.example.motordex.AppParsenterImpl2", new Object[]{1, "参数2", "参数3"});
-        //ClassInstall.inject(this, map);
+    public void getStr(View view) {
+        //使用注解注入对象必须要调用这一行
+        ClassInstall.inject(this);
+        //或者带参数的构造方法
+        //Map<String, Object[]> pramHouse=new HashMap<>();
+        //pramHouse.put("com.miqt.demo.AppPresenterImpl",new Object[]{"hello"});
+        //ClassInstall.inject(this,pramHouse);
 
         //也可以不使用注解注入的方式初始化对象
-        //ap= ObjectFactory.make("com.example.motordex.AppParsenterImpl"/*,构造参数*/);
+        //ap= ObjectFactory.make("com.miqt.demo.AppPresenterImpl"/*,构造参数*/);
+        //ap= ObjectFactory.make(AppPresenterImpl.class/*,构造参数*/);
 
-        //调用
         String str = ap.getStr();
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-        ...
     }
 }
 ```
+
+相关注解用法及作用说明：
+
+1. @InjectObject 添加到成员变量上，对该成员变量注入对象
+2. @AddToFixPatch 添加到类上，无需参数，表示该类是热修复相关的类，在编译期生成打包脚本的时候会将打了这个注释的类添加到打包列表中，如果有@InjectObject注解指定过的类，也可以不加。
+
 ## Other
 
 [如何创建并应用热修复包](https://github.com/miqt/WandFix/wiki/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%BA%94%E7%94%A8%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8C%85)

@@ -77,7 +77,15 @@ public class ObjectFactory {
     }
 
     public static <T> T make(String classname, Object... pram) {
-        return make(classname, ParentalEntrustmentLevel.NEVER);
+        return make(classname, ParentalEntrustmentLevel.NEVER, pram);
+    }
+
+    public static <T> T make(Class<T> clazz, Object... pram) {
+        return make(clazz.getName(), ParentalEntrustmentLevel.NEVER, pram);
+    }
+
+    public static <T> T make(Class<T> clazz, ParentalEntrustmentLevel level, Object... pram) {
+        return make(clazz.getName(), level, pram);
     }
 
     public static <T> T make(String classname, ParentalEntrustmentLevel level, Object... pram) {
