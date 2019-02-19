@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
+import com.miqt.wand.utils.FileUtils;
+import com.miqt.wand.utils.SPUtils;
 
 import java.io.File;
 

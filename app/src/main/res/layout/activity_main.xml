@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:gravity="center"
+    android:orientation="vertical"
     android:layout_height="match_parent"
    >
 
@@ -18,5 +19,11 @@
         android:layout_height="wrap_content"
         android:onClick="fix"
         android:text="修复（联网下载修复包）" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="proxy"
+        android:text="activity代理功能演示" />
+
 
 </LinearLayout>

@@ -1,6 +1,8 @@
-package com.miqt.wand;
+package com.miqt.wand.utils;
 
 import android.content.Context;
+
+import com.miqt.wand.Encrypter;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -105,8 +107,9 @@ public class FileUtils {
                     listener.downLoadProgress(len, fileLength);
                 }
             }
-            bin.close();
+            out.flush();
             out.close();
+            bin.close();
             return file;
         } catch (MalformedURLException e) {
             e.printStackTrace();

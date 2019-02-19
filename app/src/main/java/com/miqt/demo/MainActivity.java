@@ -7,7 +7,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.miqt.demo.R;
+import com.miqt.demo.proxy.MyActivityProxy;
 import com.miqt.wand.ClassInstall;
+import com.miqt.wand.ProxyActivityLauncher;
 import com.miqt.wand.Wand;
 import com.miqt.wand.anno.InjectObject;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
@@ -53,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
     public void fix(View view) {
         mDialog = ProgressDialog.show(this, "", "修复中...");
         Wand.get().attachPackUrl("https://github.com/miqt/WandFix/raw/master/hotfix_pack.dex");
+    }
+    public void proxy(View view) {
+        ProxyActivityLauncher.startActivity(this, MyActivityProxy.class);
     }
 
     @Override

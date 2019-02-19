@@ -1,4 +1,4 @@
-package com.miqt.wand;
+package com.miqt.wand.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
