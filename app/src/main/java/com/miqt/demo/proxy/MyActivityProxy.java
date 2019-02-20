@@ -13,8 +13,9 @@ import com.miqt.wand.activity.HostActy;
 import com.miqt.wand.anno.AddToFixPatch;
 
 /**
- * Created by t54 on 2019/2/19.
+ * Created by miqt on 2019/2/19.
  */
+//每个代理类都要设置
 @AddToFixPatch
 public class MyActivityProxy extends ActivityProxy {
     public MyActivityProxy(HostActy acty) {

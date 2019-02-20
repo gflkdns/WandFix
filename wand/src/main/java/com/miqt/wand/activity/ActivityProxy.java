@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Created by t54 on 2019/2/19.
+ * Created by miqt on 2019/2/19.
  * activity 代理器
  */
 

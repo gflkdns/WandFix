@@ -1,6 +1,7 @@
 package com.miqt.demo;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,14 +10,14 @@ import android.widget.Toast;
 import com.example.miqt.demo.R;
 import com.miqt.demo.proxy.MyActivityProxy;
 import com.miqt.wand.ClassInstall;
-import com.miqt.wand.ProxyActivityLauncher;
 import com.miqt.wand.Wand;
+import com.miqt.wand.activity.HostActy;
 import com.miqt.wand.anno.InjectObject;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity implements Wand.MotorListener {
+public class MainActivity extends HostActy implements Wand.MotorListener {
     ProgressDialog mDialog;
 
     @InjectObject(
@@ -56,8 +57,13 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
         mDialog = ProgressDialog.show(this, "", "修复中...");
         Wand.get().attachPackUrl("https://github.com/miqt/WandFix/raw/master/hotfix_pack.dex");
     }
+
     public void proxy(View view) {
-        ProxyActivityLauncher.startActivity(this, MyActivityProxy.class);
+        //启动一个受到代理的activity
+        startProxyActivity(
+                new Intent(this, HostActy.class),
+                //用谁代理
+                MyActivityProxy.class);
     }
 
     @Override
