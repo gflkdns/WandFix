@@ -21,7 +21,7 @@ WandFix是一个可以使用注解来注入实现类对象的库，基于java AP
 - 可以自己定义需要热修复的类。
 - 可以自己配置dex加密算法，保护dex文件的安全。
 - 可以通过注解单独设置某个对象是否禁用双亲委托。
-- Activity动态代理功能，2019-2-19 新增
+- [Activity动态代理](https://github.com/miqt/WandFix/wiki/Activity%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)功能，2019-2-19 新增
 
 目前只支持java类文件的替换，资源文件及布局文件替换相关正在研究中，后续会支持。
 
@@ -38,8 +38,7 @@ compile project(':wand')
 annotationProcessor project(':wand-compiler')
 ```
 
-代码调用：
-
+### 实现单个类文件的热修复
 
 ```java
 public class MainActivity extends AppCompatActivity implements Wand.MotorListener {
@@ -79,10 +78,43 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
 }
 ```
 
-相关注解用法及作用说明：
+### 实现activity动态代理
+
+先新建一个activity，继承[ProxyActivity](./wand/src/main/java/com/miqt/wand/activity/ProxyActivity.java)，然后添加`@BindProxy`注解
+```java
+//绑定代理类
+@BindProxy(clazz = TextActivityProxy.class)
+//必须继承 ProxyActivity
+public class TextActivity extends ProxyActivity {
+    //这里什么都不用写
+}
+```
+
+然后新建一个class 继承 [ActivityProxy](./wand/src/main/java/com/miqt/wand/activity/ActivityProxy.java) 实现代理方法
+
+```java
+//每个代理类都要设置
+@AddToFixPatch
+public class TextActivityProxy extends ActivityProxy {
+    public TextActivityProxy(ProxyActivity acty) {
+        super(acty);
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        mActy.setContentView(R.layout.activity_hello);
+        ...
+    }
+    ...
+}
+```
+
+直接`startActivity(new Intent(this,TextActivity.class));`启动这个activity，代理就生效了，后来如果改动代理类，可以直接通过打包热修复包下发下去。
+
+### 相关注解用法及作用说明
 
 1. @InjectObject 添加到成员变量上，对该成员变量注入对象
 2. @AddToFixPatch 添加到类上，无需参数，表示该类是热修复相关的类，在编译期生成打包脚本的时候会将打了这个注释的类添加到打包列表中，如果有@InjectObject注解指定过的类，也可以不加。
+3. @BindProxy 添加到activity类上，绑定指定的activity代理
 
 ## Other
 
