@@ -1,15 +1,12 @@
 package com.miqt.wand.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.miqt.wand.ObjectFactory;
-import com.miqt.wand.anno.AddToFixPatch;
 import com.miqt.wand.anno.BindProxy;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
@@ -21,7 +18,6 @@ import com.miqt.wand.anno.ParentalEntrustmentLevel;
  */
 
 public class ProxyActivity extends AppCompatActivity {
-    public static final String CLASSNAME = "class_name_wand";
     ActivityProxy proxy;
 
     @Override
