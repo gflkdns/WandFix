@@ -38,6 +38,40 @@ compile project(':wand')
 annotationProcessor project(':wand-compiler')
 ```
 
+
+### 实现activity动态代理
+
+先新建一个activity，继承[ProxyActivity](./wand/src/main/java/com/miqt/wand/activity/ProxyActivity.java)，然后添加`@BindProxy`注解
+```java
+//绑定代理类
+@BindProxy(clazz = TextActivityProxy.class)
+//必须继承 ProxyActivity
+public class TextActivity extends ProxyActivity {
+    //这里什么都不用写
+}
+```
+
+然后新建一个class 继承 [ActivityProxy](./wand/src/main/java/com/miqt/wand/activity/ActivityProxy.java) 实现代理方法
+
+```java
+//每个代理类都要设置
+@AddToFixPatch
+public class TextActivityProxy extends ActivityProxy {
+    public TextActivityProxy(ProxyActivity acty) {
+        super(acty);
+    }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        mActy.setContentView(R.layout.activity_hello);
+        ...
+    }
+    ...
+}
+```
+
+直接`startActivity(new Intent(this,TextActivity.class));`启动这个activity，代理就生效了，后来如果改动代理类，可以直接通过打包热修复包下发下去。
+
+
 ### 实现单个类文件的热修复
 
 ```java
@@ -77,38 +111,6 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
     }
 }
 ```
-
-### 实现activity动态代理
-
-先新建一个activity，继承[ProxyActivity](./wand/src/main/java/com/miqt/wand/activity/ProxyActivity.java)，然后添加`@BindProxy`注解
-```java
-//绑定代理类
-@BindProxy(clazz = TextActivityProxy.class)
-//必须继承 ProxyActivity
-public class TextActivity extends ProxyActivity {
-    //这里什么都不用写
-}
-```
-
-然后新建一个class 继承 [ActivityProxy](./wand/src/main/java/com/miqt/wand/activity/ActivityProxy.java) 实现代理方法
-
-```java
-//每个代理类都要设置
-@AddToFixPatch
-public class TextActivityProxy extends ActivityProxy {
-    public TextActivityProxy(ProxyActivity acty) {
-        super(acty);
-    }
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        mActy.setContentView(R.layout.activity_hello);
-        ...
-    }
-    ...
-}
-```
-
-直接`startActivity(new Intent(this,TextActivity.class));`启动这个activity，代理就生效了，后来如果改动代理类，可以直接通过打包热修复包下发下去。
 
 ### 相关注解用法及作用说明
 
