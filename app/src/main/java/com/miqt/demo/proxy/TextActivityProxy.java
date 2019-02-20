@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.example.miqt.demo.R;
 import com.miqt.wand.activity.ActivityProxy;
-import com.miqt.wand.activity.HostActy;
+import com.miqt.wand.activity.ProxyActivity;
 import com.miqt.wand.anno.AddToFixPatch;
 
 /**
@@ -17,8 +17,8 @@ import com.miqt.wand.anno.AddToFixPatch;
  */
 //每个代理类都要设置
 @AddToFixPatch
-public class MyActivityProxy extends ActivityProxy {
-    public MyActivityProxy(HostActy acty) {
+public class TextActivityProxy extends ActivityProxy {
+    public TextActivityProxy(ProxyActivity acty) {
         super(acty);
     }
 

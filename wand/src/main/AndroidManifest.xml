@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application>
         <activity
-            android:name=".activity.HostActy"
+            android:name=".activity.ProxyActivity"
             android:exported="false" />
     </application>
 </manifest>

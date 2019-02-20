@@ -1,8 +1,12 @@
 package com.miqt.wand.anno;
 
-public @interface InjectObject {
+/**
+ * Created by t54 on 2019/2/20.
+ */
+
+public @interface BindProxy {
     //class name
-    String className();
+    Class clazz();
 
     //双亲委托禁用级别
     ParentalEntrustmentLevel level()

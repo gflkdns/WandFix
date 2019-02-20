@@ -2,7 +2,7 @@ package com.miqt.wand.anno;
 
 public @interface InjectObject {
     //class name
-    String value();
+    String className();
 
     //双亲委托禁用级别
     ParentalEntrustmentLevel level()

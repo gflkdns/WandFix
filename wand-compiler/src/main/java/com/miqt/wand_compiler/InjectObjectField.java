@@ -27,7 +27,7 @@ public class InjectObjectField {
         mVariableElement = (VariableElement) element;
 
         InjectObject injectOvject = mVariableElement.getAnnotation(InjectObject.class);
-        mClassName = injectOvject.value();
+        mClassName = injectOvject.className();
         mLevel = injectOvject.level();
         if (mClassName == null) {
             throw new IllegalArgumentException(

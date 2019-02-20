@@ -2,27 +2,26 @@ package com.miqt.demo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.miqt.demo.R;
-import com.miqt.demo.proxy.MyActivityProxy;
+import com.miqt.demo.presenter.AppPresenter;
 import com.miqt.wand.ClassInstall;
 import com.miqt.wand.Wand;
-import com.miqt.wand.activity.HostActy;
+import com.miqt.wand.activity.ProxyActivity;
 import com.miqt.wand.anno.InjectObject;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
 import java.io.File;
 
-public class MainActivity extends HostActy implements Wand.MotorListener {
+public class MainActivity extends ProxyActivity implements Wand.MotorListener {
     ProgressDialog mDialog;
 
     @InjectObject(
             //指向类的全名
-            value = "com.miqt.demo.presenter.AppPresenterImpl",
+            className = "com.miqt.demo.presenter.AppPresenterImpl",
             //设置双亲委托
             //项目开发中建议使用PROJECT，优先应用本地类库。
             //项目发布时，应修改为NEVER，优先应用热修复包中的类库。
@@ -60,10 +59,7 @@ public class MainActivity extends HostActy implements Wand.MotorListener {
 
     public void proxy(View view) {
         //启动一个受到代理的activity
-        startProxyActivity(
-                new Intent(this, HostActy.class),
-                //用谁代理
-                MyActivityProxy.class);
+        startActivity(new Intent(this,TextActivity.class));
     }
 
     @Override

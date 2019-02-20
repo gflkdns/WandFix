@@ -1,4 +1,4 @@
-package com.miqt.demo;
+package com.miqt.demo.presenter;
 
 public interface AppPresenter {
     String getStr();

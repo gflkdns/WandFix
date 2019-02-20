@@ -12,9 +12,9 @@ import android.support.annotation.Nullable;
 
 public abstract class ActivityProxy {
 
-    public HostActy mActy;
+    public ProxyActivity mActy;
 
-    public ActivityProxy(HostActy acty) {
+    public ActivityProxy(ProxyActivity acty) {
         mActy = acty;
     }
 

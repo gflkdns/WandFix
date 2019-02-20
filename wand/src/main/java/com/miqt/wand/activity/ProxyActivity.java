@@ -9,6 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.miqt.wand.ObjectFactory;
+import com.miqt.wand.anno.AddToFixPatch;
+import com.miqt.wand.anno.BindProxy;
+import com.miqt.wand.anno.ParentalEntrustmentLevel;
 
 /**
  * Created by miqt on 2019/2/19.
@@ -17,36 +20,26 @@ import com.miqt.wand.ObjectFactory;
  * @see ActivityProxy
  */
 
-public class HostActy extends AppCompatActivity {
+public class ProxyActivity extends AppCompatActivity {
     public static final String CLASSNAME = "class_name_wand";
     ActivityProxy proxy;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String proxyName = getIntent().getStringExtra(CLASSNAME);
+        BindProxy proxyInfo = this.getClass().getAnnotation(BindProxy.class);
+        //如果这个类没添加这个注解，证明这个activity不需要代理，直接返回
+        if (proxyInfo == null) {
+            return;
+        }
+        String proxyName = this.getClass().getAnnotation(BindProxy.class).clazz().getName();
+        ParentalEntrustmentLevel level = this.getClass().getAnnotation(BindProxy.class).level();
         if (proxyName != null && proxyName.length() != 0) {
-            proxy = ObjectFactory.make(proxyName, this);
+            proxy = ObjectFactory.make(proxyName, level, this);
             if (proxy != null) {
                 proxy.onCreate(savedInstanceState);
             }
         }
-    }
-
-    /**
-     * 通过指定代理的方式，启动一个activity
-     * @param intent
-     * @param clazz 代理class
-     */
-    public void startProxyActivity(Intent intent, Class<? extends ActivityProxy> clazz) {
-        intent.putExtra(CLASSNAME, clazz.getName());
-        startActivity(intent);
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void startProxyActivityForResult(Intent intent, Class<? extends ActivityProxy> clazz, int requestCode, Bundle option) {
-        intent.putExtra(CLASSNAME, clazz.getName());
-        startActivityForResult(intent, requestCode, option);
     }
 
     @Override

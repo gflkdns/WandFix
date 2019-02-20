@@ -1,7 +1,5 @@
 package com.miqt.demo.presenter;
 
-import com.miqt.demo.AppPresenter;
-
 /**
  * Created by miqt on 2019/2/18.
  */
