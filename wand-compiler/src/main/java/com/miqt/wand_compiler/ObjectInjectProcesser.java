@@ -94,6 +94,7 @@ public class ObjectInjectProcesser extends AbstractProcessor {
         }
         builder.append("\n");
         builder.append("dx --dex --output=../../../../../hotfix_pack.dex hotfix_pack.jar\n");
+        builder.append("cd ../../../../../\n");
         try {
             FileOutputStream outputStream = new FileOutputStream("./make_fix_pack.bat");
             outputStream.write(builder.toString().getBytes());

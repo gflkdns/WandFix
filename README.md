@@ -22,8 +22,8 @@ WandFix是一个可以使用注解来注入实现类对象的库，基于java AP
 - 可以自己配置dex加密算法，保护dex文件的安全。
 - 可以通过注解单独设置某个对象是否禁用双亲委托。
 - [Activity动态代理](https://github.com/miqt/WandFix/wiki/Activity%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)功能，2019-2-19 新增
+- 支持加载外部布局、图标、颜色等资源文件。
 
-目前只支持java类文件的替换，资源文件及布局文件替换相关正在研究中，后续会支持。
 
 ## 使用方法：
 
@@ -111,6 +111,23 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
     }
 }
 ```
+
+### 加载apk插件中的资源文件
+
+```java
+        //先根据apk插件文件路径创建PluginResources
+        //需要文件读写权限才行
+        PluginResources manager = new PluginResources(context, pluginApkPath);
+
+        //颜色资源加载
+        int id=manager.getId("text_color", "color");
+        int color = manager.getResources().getColor(id, context.getTheme());
+        textView.setTextColor(color);
+
+        //布局加载
+        View main_layout=manager.getLayout("activity_main");
+```
+
 
 ### 相关注解用法及作用说明
 
