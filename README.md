@@ -38,6 +38,10 @@ compile project(':wand')
 annotationProcessor project(':wand-compiler')
 ```
 
+- [实现activity动态代理](#实现activity动态代理)
+- [实现单个类文件的热修复](#实现单个类文件的热修复)
+- [加载apk插件中的资源文件](#加载apk插件中的资源文件)
+
 
 ### 实现activity动态代理
 
