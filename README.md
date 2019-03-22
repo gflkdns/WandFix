@@ -139,11 +139,22 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
 2. @AddToFixPatch 添加到类上，无需参数，表示该类是热修复相关的类，在编译期生成打包脚本的时候会将打了这个注释的类添加到打包列表中，如果有@InjectObject注解指定过的类，也可以不加。
 3. @BindProxy 添加到activity类上，绑定指定的activity代理
 
+### 代码混淆相关
+
+如果项目设置了混淆，需要将以下代码复制到混淆配置文件中：
+```
+-keep class com.miqt.wand.**{*;}
+-keep class * {@com.miqt.wand.anno.InjectObject <fields>;}
+-keep @com.miqt.wand.anno.AddToFixPatch class * {*;}
+-keep @com.miqt.wand.anno.BindProxy class * {*;}
+```
+
 ## Other
+千里之行，始于足下，欢迎提出问题和宝贵意见。
 
 [如何创建并应用热修复包](https://github.com/miqt/WandFix/wiki/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%BA%94%E7%94%A8%E7%83%AD%E4%BF%AE%E5%A4%8D%E5%8C%85)
 
 具体更多用法请移步[Wiki](https://github.com/miqt/WandFix/wiki)
 
-> 欢迎提出问题和宝贵意见。如果您觉得这个项目还不错，就点个star吧(￣▽￣)~*
+如果您觉得这个项目还不错，就点个star吧(￣▽￣)~*
 
