@@ -1,5 +1,6 @@
 # WandFix
 
+[![](https://jitpack.io/v/miqt/WandFix.svg)](https://jitpack.io/#miqt/WandFix)
 
 当你的项目已经上线，一个BUG被发现却已经为时已晚，这时候悔恨自责都已经于事无补，甚至还会被伙伴们打上不靠谱的标签，这时候你想不想像哈利波特一样，魔法杖一挥BUG瞬间消除，没错拿着WindFix你就可以实现这一点。  
 
@@ -27,15 +28,21 @@ WandFix是一个可以使用注解来注入实现类对象的库，基于java AP
 
 ## 使用方法：
 
+在项目根目录的build.gradle添加：
 ```
-git clone https://github.com/miqt/WandFix.git
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
 ```
 
-添加依赖：
+然后在:app:添加依赖：
 
 ```
-compile project(':wand')
-annotationProcessor project(':wand-compiler')
+annotationProcessor  'com.github.miqt.WandFix:wand-compiler:v1.3.3'
+compile  'com.github.miqt.WandFix:wand:v1.3.3'
 ```
 
 - [实现activity动态代理](#实现activity动态代理)
