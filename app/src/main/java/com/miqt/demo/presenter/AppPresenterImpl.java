@@ -24,6 +24,6 @@ public class AppPresenterImpl implements AppPresenter {
 
     @Override
     public String getStr() {
-        return "2019年3月22日07:29:50 世界早安！";
+        return name.toLowerCase();
     }
 }
