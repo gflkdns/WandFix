@@ -2,9 +2,11 @@ package com.miqt.wand.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 
 import com.miqt.wand.ObjectFactory;
 import com.miqt.wand.anno.BindProxy;
@@ -46,6 +48,35 @@ public class ProxyActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        proxy.onBackPressed();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (proxy.onKeyDown(keyCode, event)) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (proxy.onKeyUp(keyCode, event)) {
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (proxy.onKeyLongPress(keyCode, event)) {
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }
 
     @Override
     protected void onResume() {
@@ -53,6 +84,12 @@ public class ProxyActivity extends AppCompatActivity {
         if (proxy != null) {
             proxy.onResume();
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        proxy.onNewIntent(intent);
     }
 
     @Override
