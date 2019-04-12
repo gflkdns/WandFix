@@ -91,6 +91,10 @@ public class ObjectInjectProcesser extends AbstractProcessor {
             builder.append(" ./")
                     .append(className.replace('.', '/'))
                     .append(".class");
+            //inner class support
+            builder.append(" ./")
+                    .append(className.replace('.', '/'))
+                    .append("$*.class");
         }
         builder.append("\n");
         builder.append("dx --dex --output=../../../../../hotfix_pack.dex hotfix_pack.jar\n");
