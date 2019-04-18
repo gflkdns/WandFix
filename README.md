@@ -52,6 +52,8 @@ compile  'com.github.miqt.WandFix:wand:v1.3.6'
 
 ### 实现activity动态代理
 
+activity动态代理就是把一个activity的全部事情，都交给一个代理类去处理，而这个代理本质上也是一个类，一个对象，因此我们只要使用DexClassloader一替换，即变成了动态代理。
+
 先新建一个activity，继承[ProxyActivity](./wand/src/main/java/com/miqt/wand/activity/ProxyActivity.java)，然后添加`@BindProxy`注解
 ```java
 //绑定代理类
