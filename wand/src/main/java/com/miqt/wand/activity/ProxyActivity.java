@@ -51,12 +51,14 @@ public class ProxyActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        proxy.onBackPressed();
+        if (proxy!=null) {
+            proxy.onBackPressed();
+        }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (proxy.onKeyDown(keyCode, event)) {
+        if (proxy!=null&&proxy.onKeyDown(keyCode, event)) {
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -64,7 +66,7 @@ public class ProxyActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (proxy.onKeyUp(keyCode, event)) {
+        if (proxy!=null&&proxy.onKeyUp(keyCode, event)) {
             return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -72,7 +74,7 @@ public class ProxyActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        if (proxy.onKeyLongPress(keyCode, event)) {
+        if (proxy!=null&&proxy.onKeyLongPress(keyCode, event)) {
             return true;
         }
         return super.onKeyLongPress(keyCode, event);
@@ -89,7 +91,9 @@ public class ProxyActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        proxy.onNewIntent(intent);
+        if (proxy!=null) {
+            proxy.onNewIntent(intent);
+        }
     }
 
     @Override

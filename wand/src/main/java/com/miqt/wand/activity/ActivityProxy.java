@@ -36,12 +36,12 @@ public abstract class ActivityProxy {
      *
      * @param id 填“R.id.idname”格式一定要正确，最好是先用android的findviewbyid然后再加上双引号就好了
      */
-    public View findViewById(@NonNull String id) {
-        return mActy.findViewById(analyzeRealId(id));
+    public <T extends View> T findViewById(@NonNull String id) {
+        return (T) mActy.findViewById(analyzeRealId(id));
     }
 
     private int analyzeRealId(String id) {
-        String[] idElements = id.split(".");
+        String[] idElements = id.split("\\.");
         if (idElements.length < 3) {
             return -1;
         }

@@ -24,8 +24,8 @@ public class TextActivityProxy extends ActivityProxy {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        mActy.setContentView(R.layout.activity_hello);
-        TextView textView = mActy.findViewById(R.id.tv_text);
+        setContentView("R.layout.activity_hello");
+        TextView textView = findViewById("R.id.tv_text");
         textView.setText("我是一号代理，我要变成蓝色");
         textView.setTextColor(Color.BLUE);
     }

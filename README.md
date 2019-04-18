@@ -169,9 +169,9 @@ public class MainActivity extends AppCompatActivity implements Wand.MotorListene
 
 ## 开发中遇到的问题和现存问题
 
-- [x] targetVersion > 25 的时候，activity代理不生效
-- [x] 热修复包中如果有匿名内部类，则报java.lang.NoClassDefFoundError
-- [ ] activity代理中如果使用了findviewbyid，有的时候找到的控件为空或类型转换异常
+- [x] targetVersion > 25 的时候，activity代理不生效(已经解决)
+- [x] 热修复包中如果有匿名内部类，则报java.lang.NoClassDefFoundError(已经解决)
+- [x] activity代理中如果使用了findviewbyid，有的时候找到的控件为空或类型转换异常(已经解决)
 - [ ] 对于混淆处理的还不太好，因为反射的原因，如果混淆就会ClassNotfoundException，而不混淆的话对于源码的保护则没有保障，不过我目前想到了几个方案，还没有实施。
     - [ ] 方案一：通过解析.\app\build\outputs\mapping\debug\mapping.txt这个文件获得原始的类、方法和名称与混淆代码间的映射关系，然后在代码中找到对应的类。
     - [ ] 方案二：实施dex加壳，热修复包实际上是个dex文件，而如果自定义一种加壳方法，也就一定程度上避免了反编译。
