@@ -40,7 +40,7 @@ public abstract class ActivityProxy {
      * <br><br/>
      * 使用： <b>([^\(\),]*R\.[^\(\),]*)
      * <br><br/>
-     * 替换：<b>$"$1"<b/>
+     * 替换：<b>$("$1")<b/>
      *
      * @param id 填“R.id.idname”格式一定要正确，最好是先用android的findviewbyid然后再加上双引号就好了
      */
