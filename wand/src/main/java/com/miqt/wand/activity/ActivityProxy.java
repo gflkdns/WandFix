@@ -25,22 +25,26 @@ public abstract class ActivityProxy {
     public abstract void onCreate(@Nullable Bundle savedInstanceState);
 
     /**
-     * 为什么要用这个方法<br><br/>主要用于解决主module模块R文件是用final修饰的，
+     * 为什么要用这个方法?
+     * <br><br/>
+     * 主要用于解决主module模块R文件是用final修饰的，
      * 而用final修饰的对象在java中视为常量，在编辑成.class文件的时候，这个常量
      * 不会使用R.id.***的方式去引用而是直接是数字。因此这个值因为我们每次编译造成同一个id实际的id数字不一致，导致
      * findviewid找出来的view为空或者类型异常。
      * <p>
      * <br><br/>
-     * <p>
      * 这个方法就是为了解决这个问题
+     * <br><br/>
+     * <p>
+     * 方便起见，可以使用正则表达式批量替换代码
+     * <br><br/>
+     * 使用： <b>([^\(\),]*R\.[^\(\),]*)
+     * <br><br/>
+     * 替换：<b>$"$1"<b/>
      *
      * @param id 填“R.id.idname”格式一定要正确，最好是先用android的findviewbyid然后再加上双引号就好了
      */
-    public <T extends View> T findViewById(@NonNull String id) {
-        return (T) mActy.findViewById(analyzeRealId(id));
-    }
-
-    private int analyzeRealId(String id) {
+    public int $(String id) {
         String[] idElements = id.split("\\.");
         if (idElements.length < 3) {
             return -1;
@@ -61,9 +65,6 @@ public abstract class ActivityProxy {
         return mActy.getResources().getIdentifier(idname, idtype, packagename);
     }
 
-    public void setContentView(String layoutResID) {
-        mActy.setContentView(analyzeRealId(layoutResID));
-    }
 
     public void onStart() {
     }
