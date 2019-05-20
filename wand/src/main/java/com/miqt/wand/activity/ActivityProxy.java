@@ -9,6 +9,8 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.miqt.wand.utils.R2;
+
 /**
  * Created by miqt on 2019/2/19.
  * activity 代理器
@@ -32,6 +34,7 @@ public abstract class ActivityProxy {
      * 不会使用R.id.***的方式去引用而是直接是数字。因此这个值因为我们每次编译造成同一个id实际的id数字不一致，导致
      * findviewid找出来的view为空或者类型异常。
      * <p>
+     * 至于不在主module模块引用的R文件，则无须使用这个方法,直接正常填写id即可
      * <br><br/>
      * 这个方法就是为了解决这个问题
      * <br><br/>
@@ -45,24 +48,7 @@ public abstract class ActivityProxy {
      * @param id 填“R.id.idname”格式一定要正确，最好是先用android的findviewbyid然后再加上双引号就好了
      */
     public int $(String id) {
-        String[] idElements = id.split("\\.");
-        if (idElements.length < 3) {
-            return -1;
-        }
-        String idname = idElements[idElements.length - 1];
-        String idtype = idElements[idElements.length - 2];
-        String R = idElements[idElements.length - 3];
-        StringBuilder packagenameBuilder = new StringBuilder();
-        if (idElements.length > 3) {
-            for (int i = 0; i < idElements.length - 4; i++) {
-                packagenameBuilder.append(idElements[i]).append(".");
-            }
-        }
-        String packagename = packagenameBuilder.toString();
-        if (TextUtils.isEmpty(packagename)) {
-            packagename = mActy.getPackageName();
-        }
-        return mActy.getResources().getIdentifier(idname, idtype, packagename);
+        return R2.id_(id);
     }
 
 
