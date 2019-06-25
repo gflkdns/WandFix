@@ -28,9 +28,9 @@ public class TextActivityProxy extends ActivityProxy {
         mActy.setContentView($("R.layout.activity_hello"));
         TextView textView = mActy.findViewById($("R.id.tv_text"));
 
-        textView.setText("我是1号代理，我要变成蓝色");
-        textView.append("\n\n" + GetString.getString() + GetString.bbb + GetString.ccc);
-        textView.setTextColor(Color.BLUE);
+        textView.setText("我是1号代理，我要变成红色");
+        textView.append("\n\n" + GetString.getString() + GetString.bbb + GetString.ccc + new GetString().ddd);
+        textView.setTextColor(Color.RED);
     }
 
     @Override
