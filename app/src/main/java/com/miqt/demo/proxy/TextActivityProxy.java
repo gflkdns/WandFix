@@ -25,6 +25,7 @@ public class TextActivityProxy extends ActivityProxy {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mActy.setContentView($("R.layout.activity_hello"));
         TextView textView = mActy.findViewById($("R.id.tv_text"));
+        textView.setText("。。。");
     }
 
     @Override
