@@ -14,4 +14,56 @@ public class TextFixBean implements ITextFixBean {
     public int public_int = 1;
     public static int public_static_int = 1;
     public final static int public_final_static_int = 1;
+
+    @Override
+    public void setStaticString(String str) {
+        public_static_String = str;
+    }
+
+    @Override
+    public String getStaticString() {
+        return public_static_String;
+    }
+
+    @Override
+    public int getStaticInt() {
+        return public_static_int;
+    }
+
+    @Override
+    public void setStaticInt(int num) {
+        public_static_int = num;
+    }
+
+    @Override
+    public int getFinalStaticInt() {
+        return public_final_static_int;
+    }
+
+    @Override
+    public String getFinalStaticString() {
+        return public_final_static_String;
+    }
+
+    @Override
+    public String getString() {
+        return public_String;
+    }
+
+    @Override
+    public void setString(String str) {
+        public_String = str;
+    }
+
+    @Override
+    public int getInt() {
+        return public_int;
+    }
+
+    @Override
+    public void setInt(int num) {
+        public_int = num;
+    }
+
+
 }

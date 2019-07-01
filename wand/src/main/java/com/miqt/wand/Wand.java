@@ -69,6 +69,7 @@ public class Wand {
 
     /**
      * 初始化
+     *
      * @param context 最好不要传具体某个activity，可能引发内存泄漏
      * @return Wand
      */
@@ -142,8 +143,11 @@ public class Wand {
     }
 
     public Class<?> loadClass(String classname, ParentalEntrustmentLevel level) throws ClassNotFoundException {
-        if(mClassLoader==null){
+        if (mClassLoader == null) {
             throw new IllegalStateException("Please initialize ‘wandfix’");
+        }
+        if (level == ParentalEntrustmentLevel.PROJECT) {
+            return mContext.getClassLoader().loadClass(classname);
         }
         MyDexClassLoader loader = (MyDexClassLoader) mClassLoader;
         loader.setLevel(level);
