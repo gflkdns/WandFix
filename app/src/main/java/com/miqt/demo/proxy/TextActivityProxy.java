@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.TextView;
 
-import com.example.miqt.demo.R;
-import com.miqt.demo.teststatic.GetString;
 import com.miqt.wand.activity.ActivityProxy;
 import com.miqt.wand.activity.ProxyActivity;
 import com.miqt.wand.anno.AddToFixPatch;
@@ -27,10 +25,6 @@ public class TextActivityProxy extends ActivityProxy {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mActy.setContentView($("R.layout.activity_hello"));
         TextView textView = mActy.findViewById($("R.id.tv_text"));
-
-        textView.setText("我是1号代理，我要变成红色");
-        textView.append("\n\n" + GetString.getString() + GetString.bbb + GetString.ccc + new GetString().ddd);
-        textView.setTextColor(Color.RED);
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
@@ -126,7 +125,7 @@ public class Wand {
         Message.obtain(mMainHandler, NEW_PACK_ATTACH, file).sendToTarget();
     }
 
-    @NonNull
+
     private String getCachePath() {
         String dex_path = SPUtils.get(mContext, CACHE_DEX_PATH);
         if (!TextUtils.isEmpty(dex_path)) {
@@ -143,6 +142,9 @@ public class Wand {
     }
 
     public Class<?> loadClass(String classname, ParentalEntrustmentLevel level) throws ClassNotFoundException {
+        if(mClassLoader==null){
+            throw new IllegalStateException("Please initialize ‘wandfix’");
+        }
         MyDexClassLoader loader = (MyDexClassLoader) mClassLoader;
         loader.setLevel(level);
         return mClassLoader.loadClass(classname);
