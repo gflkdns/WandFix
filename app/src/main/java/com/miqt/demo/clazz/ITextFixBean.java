@@ -1,4 +1,4 @@
-package com.miqt.demo;
+package com.miqt.demo.clazz;
 
 public interface ITextFixBean {
     void setStaticString(String str);

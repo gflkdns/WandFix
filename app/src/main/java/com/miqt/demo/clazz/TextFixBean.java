@@ -1,4 +1,4 @@
-package com.miqt.demo;
+package com.miqt.demo.clazz;
 
 import com.miqt.wand.anno.AddToFixPatch;
 
@@ -63,6 +63,18 @@ public class TextFixBean implements ITextFixBean {
     @Override
     public void setInt(int num) {
         public_int = num;
+    }
+
+    public static class StaticInnerC {
+        public static String getString(String str) {
+            return str;
+        }
+    }
+
+    public class InnerC {
+        public String getString(String str) {
+            return str;
+        }
     }
 
 

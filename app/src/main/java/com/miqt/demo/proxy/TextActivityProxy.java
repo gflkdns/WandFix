@@ -25,7 +25,7 @@ public class TextActivityProxy extends ActivityProxy {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mActy.setContentView($("R.layout.activity_hello"));
         TextView textView = mActy.findViewById($("R.id.tv_text"));
-        textView.setText("。。。");
+        textView.setText("没有代理,只能自己干活了.");
     }
 
     @Override

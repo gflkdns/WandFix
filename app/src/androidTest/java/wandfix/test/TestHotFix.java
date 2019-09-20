@@ -1,10 +1,9 @@
+package wandfix.test;
+
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
-
-import com.miqt.demo.ITextFixBean;
-import com.miqt.demo.TextFixBean;
 import com.miqt.wand.ObjectFactory;
 import com.miqt.wand.Wand;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
@@ -15,6 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+
+import com.miqt.demo.clazz.ITextFixBean;
+import com.miqt.demo.clazz.TextFixBean;
 
 
 /**
@@ -39,12 +41,12 @@ public class TestHotFix {
         //apk中的class
         ITextFixBean apk2Bean = new TextFixBean();
 
-        Log.d("TestHotFix", "fix1Bean class:" + fix1Bean.getClass().hashCode() + "\n" +
+        Log.d("com.wandfix.test.TestHotFix", "fix1Bean class:" + fix1Bean.getClass().hashCode() + "\n" +
                 "fix2Bean class:" + fix2Bean.getClass().hashCode() + "\n" +
                 "apk1Bean class:" + apk1Bean.getClass().hashCode() + "\n" +
                 "apk2Bean class:" + apk2Bean.getClass().hashCode() + "\n"
         );
-        Log.d("TestHotFix", "fix1Bean class:" + fix1Bean.getStaticString() + "\n" +
+        Log.d("com.wandfix.test.TestHotFix", "fix1Bean class:" + fix1Bean.getStaticString() + "\n" +
                 "fix2Bean class:" + fix2Bean.getStaticString() + "\n" +
                 "apk1Bean class:" + apk1Bean.getStaticString() + "\n" +
                 "apk2Bean class:" + apk2Bean.getStaticString() + "\n"
@@ -55,5 +57,14 @@ public class TestHotFix {
         Assert.assertEquals(apk1Bean.getStaticString(), apk2Bean.getStaticString());
 
         Assert.assertNotEquals(fix1Bean.getStaticString(), fix2Bean.getStaticString());
+
+        //测试静态内部类静态方法
+        String result = ObjectFactory.invokeStaticMethod(TextFixBean.StaticInnerC.class, "getString", "123");
+        Assert.assertEquals("123", result);
+
+        //测试内部类
+        TextFixBean bean=ObjectFactory.make(TextFixBean.class);
+        TextFixBean.InnerC innerC = ObjectFactory.make(TextFixBean.InnerC.class,bean);
+        Assert.assertEquals("123", innerC.getString("123"));
     }
 }

@@ -108,7 +108,7 @@ public class ObjectFactory {
                 }
             }
             if (constructor == null) {
-                throw new IllegalArgumentException("[" + classname + "]" + "not has parameter type constructor");
+                throw new IllegalArgumentException("[" + classname + "]" + "not has parameter type constructor,if this is a innerClass,please see :https://github.com/miqt/WandFix/wiki/");
             }
             constructor.setAccessible(true);
             T o = constructor.newInstance(pram);
