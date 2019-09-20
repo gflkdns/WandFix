@@ -63,8 +63,10 @@ public class TestHotFix {
         Assert.assertEquals("123", result);
 
         //测试内部类
-        TextFixBean bean=ObjectFactory.make(TextFixBean.class);
-        TextFixBean.InnerC innerC = ObjectFactory.make(TextFixBean.InnerC.class,bean);
-        Assert.assertEquals("123", innerC.getString("123"));
+        ITextFixBean bean = ObjectFactory.make(TextFixBean.class);
+        Object innerC = ObjectFactory.make(TextFixBean.InnerC.class, bean);
+        Assert.assertEquals("123", ObjectFactory.invokeMethod(innerC,
+                TextFixBean.InnerC.class.getName()
+                , "getString", null, "123"));
     }
 }
