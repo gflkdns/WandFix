@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
 import com.miqt.wand.bean.DexPatch;
@@ -109,7 +110,17 @@ public class Wand {
 
     public void attachPack(DexPatch dexPatch) {
         try {
-            mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, mContext.getClassLoader().getParent());
+            mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, mContext.getClassLoader().getParent(), new WandClassLoader.Callback() {
+                @Override
+                public void onLoadClass(ClassLoader loader, String name) {
+                    Log.d("wandfoix_loadclass", name + " --> " + loader.getClass().getName());
+                }
+
+                @Override
+                public void onNotFound(String name) {
+                    Log.e("wandfoix_loadclass", name + " --> " + "not found");
+                }
+            });
             HackClassLoader.hackParentClassLoader(mContext.getClassLoader(), mClassLoader);
             Message.obtain(mMainHandler, NEW_PACK_ATTACH, dexPatch.getDexFilePath()).sendToTarget();
         } catch (Exception e) {

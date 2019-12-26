@@ -37,7 +37,7 @@ class WandClassLoader extends DexClassLoader {
         Class<?> c = findLoadedClass(name);
         if (c != null) {
             if (callback != null) {
-                callback.onLoadByCache(name);
+                callback.onLoadClass(this, name);
             }
             return c;
         }
@@ -46,15 +46,12 @@ class WandClassLoader extends DexClassLoader {
             c = findClass(name);
             if (c != null) {
                 if (callback != null) {
-                    callback.onLoadBySelf(name);
+                    callback.onLoadClass(this, name);
                 }
                 return c;
             }
         } catch (ClassNotFoundException e) {
 
-        }
-        if (callback != null) {
-            callback.onSelfNotFound(name);
         }
         //--------从父亲中找
         try {
@@ -63,7 +60,7 @@ class WandClassLoader extends DexClassLoader {
             }
             if (c != null) {
                 if (callback != null) {
-                    callback.onLoadByParent(name);
+                    callback.onLoadClass(getParent(), name);
                 }
                 return c;
             }
@@ -77,7 +74,7 @@ class WandClassLoader extends DexClassLoader {
             }
             if (c != null) {
                 if (callback != null) {
-                    callback.onLoadByParent(name);
+                    callback.onLoadClass(Wand.get().getContext().getClassLoader(), name);
                 }
                 return c;
             }
@@ -91,13 +88,7 @@ class WandClassLoader extends DexClassLoader {
     }
 
     public interface Callback {
-        void onSelfNotFound(String name);
-
-        void onLoadBySelf(String name);
-
-        void onLoadByCache(String name);
-
-        void onLoadByParent(String name);
+        void onLoadClass(ClassLoader loader, String name);
 
         void onNotFound(String name);
     }
