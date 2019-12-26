@@ -14,8 +14,6 @@ import com.miqt.wand.utils.ThreadPool;
 
 import java.io.File;
 
-import dalvik.system.DexClassLoader;
-
 /**
  * @author https://github.com/miqt/WandFix
  * @time 2018年12月19日17:34:00
@@ -111,7 +109,7 @@ public class Wand {
 
     public void attachPack(DexPatch dexPatch) {
         try {
-            mClassLoader = new DexClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, mContext.getClassLoader().getParent());
+            mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, mContext.getClassLoader().getParent());
             HackClassLoader.hackParentClassLoader(mContext.getClassLoader(), mClassLoader);
             Message.obtain(mMainHandler, NEW_PACK_ATTACH, dexPatch.getDexFilePath()).sendToTarget();
         } catch (Exception e) {
