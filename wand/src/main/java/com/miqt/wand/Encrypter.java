@@ -1,7 +1,6 @@
 package com.miqt.wand;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.File;
 
 /**
  * 热修复包解码器
@@ -10,7 +9,7 @@ import java.io.OutputStream;
  * @time 2018年12月19日17:35:31
  */
 public interface Encrypter {
-    void encrypt(OutputStream out, InputStream in);
+    void encrypt(File from, File to);
 
-    void decrypt(OutputStream out, InputStream in);
+    void decrypt(File from, File to);
 }

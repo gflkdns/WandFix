@@ -1,9 +1,12 @@
 package com.miqt.demo.presenter;
 
+import com.miqt.wand.anno.AddToFixPatch;
+
 /**
  * Created by miqt on 2019/2/18.
  */
 
+@AddToFixPatch
 public class AppPresenterImpl implements AppPresenter {
     String name;
 
@@ -20,6 +23,7 @@ public class AppPresenterImpl implements AppPresenter {
     }
 
     public AppPresenterImpl() {
+        name = "111";
     }
 
     @Override

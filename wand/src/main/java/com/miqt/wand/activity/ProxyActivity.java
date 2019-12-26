@@ -1,5 +1,6 @@
 package com.miqt.wand.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -19,7 +20,7 @@ import com.miqt.wand.anno.ParentalEntrustmentLevel;
  * @see ActivityProxy
  */
 
-public class ProxyActivity extends AppCompatActivity {
+public class ProxyActivity extends Activity {
     ActivityProxy proxy;
 
     @Override

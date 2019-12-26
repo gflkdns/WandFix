@@ -1,7 +1,6 @@
 package com.miqt.demo.proxy;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,7 +24,7 @@ public class TextActivityProxy extends ActivityProxy {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mActy.setContentView($("R.layout.activity_hello"));
         TextView textView = mActy.findViewById($("R.id.tv_text"));
-        textView.setText("没有代理,只能自己干活了.");
+        textView.setText("没有代理,只能自己干活了..");
     }
 
     @Override

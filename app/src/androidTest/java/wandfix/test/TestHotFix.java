@@ -4,6 +4,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.miqt.demo.clazz.ITextFixBean;
+import com.miqt.demo.clazz.TextFixBean;
 import com.miqt.wand.ObjectFactory;
 import com.miqt.wand.Wand;
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
@@ -14,9 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-
-import com.miqt.demo.clazz.ITextFixBean;
-import com.miqt.demo.clazz.TextFixBean;
 
 
 /**
@@ -69,4 +68,13 @@ public class TestHotFix {
                 TextFixBean.InnerC.class.getName()
                 , "getString", null, "123"));
     }
+
+    @Test
+    public void test2() throws Exception {
+
+
+
+    }
+
+
 }

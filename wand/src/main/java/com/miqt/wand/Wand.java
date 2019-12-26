@@ -7,10 +7,14 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.miqt.wand.anno.ParentalEntrustmentLevel;
+import com.miqt.wand.bean.DexPatch;
 import com.miqt.wand.utils.FileUtils;
 import com.miqt.wand.utils.SPUtils;
+import com.miqt.wand.utils.ThreadPool;
 
 import java.io.File;
+
+import dalvik.system.DexClassLoader;
 
 /**
  * @author https://github.com/miqt/WandFix
@@ -23,15 +27,13 @@ public class Wand {
     private static final int ERROR = 0x2;
     private static final int NEW_PACK_ATTACH = 0x3;
 
-    private static volatile Wand instance;
-
     private Context mContext;
     private MotorListener mListener;
     private ClassLoader mClassLoader;
     private Handler mMainHandler;
-    private Encrypter mEncrypter;
 
-    private Wand() {
+    private Wand(Context context) {
+        mContext = context.getApplicationContext();
         mMainHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -48,82 +50,74 @@ public class Wand {
                         break;
                     case NEW_PACK_ATTACH:
                         if (mListener != null) {
-                            mListener.onNewPackAttach((File) msg.obj);
+                            mListener.onNewPackAttach((String) msg.obj);
                         }
                         break;
+                    default: {
+                    }
                 }
             }
         };
     }
 
-    public static Wand get() {
+    private static volatile Wand instance = null;
+
+    public static Wand getInstance(Context context) {
         if (instance == null) {
             synchronized (Wand.class) {
                 if (instance == null) {
-                    instance = new Wand();
+                    instance = new Wand(context);
                 }
             }
         }
         return instance;
     }
 
-    /**
-     * 初始化
-     *
-     * @param context 最好不要传具体某个activity，可能引发内存泄漏
-     * @return Wand
-     */
-    public Wand init(Context context) {
-        mContext = context;
-        mClassLoader = new MyDexClassLoader(
-                getCachePath(), mContext.getFilesDir().getAbsolutePath()
-                , null, mContext.getClassLoader());
-        Message.obtain(mMainHandler, FINISH).sendToTarget();
+    public Wand listener(MotorListener mListener) {
+        this.mListener = mListener;
         return this;
     }
 
-    public Wand encrypter(Encrypter encrypter) {
-        instance.mEncrypter = encrypter;
-        return get();
+    public static Wand get() {
+        if (instance == null) {
+            throw new IllegalStateException("wand fix 没有初始化");
+        }
+        return instance;
     }
 
-    public Wand listener(MotorListener listener) {
-        instance.mListener = listener;
-        return get();
-    }
 
     public void attachPackUrl(final String url) {
-        new Thread() {
+        ThreadPool.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 File file = FileUtils.downloadFile(url, getCachePath(), null);
-                attachPack(file);
+                if (file != null) {
+                    attachPack(file);
+                }
             }
-        }.start();
+        });
     }
 
     public void attachPackAsset(String asset) {
-        FileUtils.copyFileFromAssets(null, mContext, asset, getCachePath());
+        FileUtils.copyFileFromAssets(mContext, asset, getCachePath());
         attachPack(new File(getCachePath()));
     }
 
-    public void attachPack(File pack) {
-        if (pack == null) {
-            return;
+    public DexPatch attachPack(File pack) {
+        DexPatch patch = new DexPatch(pack.getAbsolutePath(), mContext.getCacheDir().getAbsolutePath());
+        attachPack(patch);
+        return patch;
+    }
+
+    public void attachPack(DexPatch dexPatch) {
+        try {
+            mClassLoader = new DexClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, mContext.getClassLoader().getParent());
+            HackClassLoader.hackParentClassLoader(mContext.getClassLoader(), mClassLoader);
+            Message.obtain(mMainHandler, NEW_PACK_ATTACH, dexPatch.getDexFilePath()).sendToTarget();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Message.obtain(mMainHandler, ERROR, e).sendToTarget();
         }
-        String dataDir = mContext.getCacheDir().getAbsolutePath();
-        File file = null;
-        if (!pack.getAbsolutePath().contains(dataDir) || mEncrypter != null) {
-            file = new File(getCachePath());
-            FileUtils.copyFile(mEncrypter, mContext, pack.getAbsolutePath(), file.getAbsolutePath());
-        } else {
-            file = pack;
-        }
-        mClassLoader = new MyDexClassLoader(
-                file.getAbsolutePath(), mContext.getFilesDir().getAbsolutePath()
-                , null, mContext.getClassLoader());
-        SPUtils.put(mContext, CACHE_DEX_PATH, file.getAbsolutePath());
-        Message.obtain(mMainHandler, NEW_PACK_ATTACH, file).sendToTarget();
     }
 
 
@@ -143,15 +137,14 @@ public class Wand {
     }
 
     public Class<?> loadClass(String classname, ParentalEntrustmentLevel level) throws ClassNotFoundException {
-        if (mClassLoader == null) {
-            throw new IllegalStateException("Please initialize ‘wandfix’");
+        Class result = mClassLoader.loadClass(classname);
+        if (result != null) {
+            return result;
         }
-        if (level == ParentalEntrustmentLevel.PROJECT) {
-            return mContext.getClassLoader().loadClass(classname);
+        if (level == ParentalEntrustmentLevel.NEVER) {
+            return null;
         }
-        MyDexClassLoader loader = (MyDexClassLoader) mClassLoader;
-        loader.setLevel(level);
-        return mClassLoader.loadClass(classname);
+        return mContext.getClassLoader().loadClass(classname);
     }
 
     public Context getContext() {
@@ -164,6 +157,6 @@ public class Wand {
 
         void initError(Throwable throwable);
 
-        void onNewPackAttach(File file);
+        void onNewPackAttach(String file);
     }
 }
