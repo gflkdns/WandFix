@@ -12,7 +12,7 @@
 
 而本项目的核心替换方法就是，在BootCLassLoader - PathClassLoader 中间，插入了一个自定义的WandClassLoader，这样，当我们的项目加载一个类的时候，会先试用WandCLassLoader 加载，我们就达到替换的目的了，相对于替换之前，达到了无使用反射的目的。
 
-![流程图](./preview/流程图/png)
+![流程图](./preview/流程图.png)
   
 ## About
   
