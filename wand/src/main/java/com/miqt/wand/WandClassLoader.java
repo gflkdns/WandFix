@@ -30,6 +30,7 @@ class WandClassLoader extends DexClassLoader {
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         if (notFoundClass.contains(name)) {
+            notFoundClass.remove(name);
             //向下双亲委派
             throw new ClassNotFoundException(name);
         }

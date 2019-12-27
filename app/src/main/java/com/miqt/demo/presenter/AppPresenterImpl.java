@@ -7,7 +7,7 @@ import com.miqt.wand.anno.AddToFixPatch;
  */
 
 @AddToFixPatch
-public class AppPresenterImpl implements AppPresenter {
+public class AppPresenterImpl {
     String name;
 
     public AppPresenterImpl(CharSequence name) {
@@ -23,10 +23,8 @@ public class AppPresenterImpl implements AppPresenter {
     }
 
     public AppPresenterImpl() {
-        name = "111";
     }
 
-    @Override
     public String getStr() {
         return name.toLowerCase();
     }

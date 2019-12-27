@@ -18,7 +18,6 @@ public class SPUtils {
     public static void put(Context context, String key, String value) {
         SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
         editor.putString(key, value);
         editor.apply();
     }

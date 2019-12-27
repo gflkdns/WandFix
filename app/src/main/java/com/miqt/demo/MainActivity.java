@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.miqt.demo.R;
-import com.miqt.demo.presenter.AppPresenter;
 import com.miqt.demo.presenter.AppPresenterImpl;
 import com.miqt.wand.Wand;
 import com.miqt.wand.activity.ProxyActivity;
@@ -54,7 +53,7 @@ public class MainActivity extends ProxyActivity implements Wand.MotorListener {
 
 
     public void getStr(View view) {
-        AppPresenter ap = new AppPresenterImpl();
+        AppPresenterImpl ap = new AppPresenterImpl();
         Toast.makeText(this, ap.getStr(), Toast.LENGTH_SHORT).show();
     }
 }

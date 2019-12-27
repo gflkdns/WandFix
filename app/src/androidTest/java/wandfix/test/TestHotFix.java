@@ -25,7 +25,7 @@ import java.io.File;
 public class TestHotFix {
     @Test
     public void test() throws Exception {
-        Wand.get().init(InstrumentationRegistry.getTargetContext());
+        Wand.getInstance(InstrumentationRegistry.getTargetContext());
         // Wand.get().attachPackUrl("https://github.com/miqt/WandFix/raw/master/hotfix_pack.dex");
 
         File file = FileUtils.downloadFile("https://github.com/miqt/WandFix/raw/master/hotfix_pack.dex"

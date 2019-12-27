@@ -14,13 +14,18 @@ import com.miqt.wand.utils.SPUtils;
 import com.miqt.wand.utils.ThreadPool;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * @author https://github.com/miqt/WandFix
  * @time 2018年12月19日17:34:00
  */
 public class Wand {
-    private static final String CACHE_DEX_PATH = "dex_path";
+    private static final String LAST_CACHE_DEX_PATH = "last_dex_path";
+    private static final String LAST_CACHE_ODEX_PATH = "last_odex_path";
+
+    private String def_dex_path;
+    private String def_odex_path;
 
     private static final int FINISH = 0x1;
     private static final int ERROR = 0x2;
@@ -33,6 +38,8 @@ public class Wand {
 
     private Wand(Context context) {
         mContext = context.getApplicationContext();
+        def_dex_path = mContext.getFilesDir().getAbsolutePath() + "/wandfix/wandfix.dex";
+        def_odex_path = mContext.getFilesDir().getAbsolutePath() + "/wandfix_cache/";
         mMainHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -59,6 +66,19 @@ public class Wand {
         };
     }
 
+    public Wand attachLastPatch() {
+        String path = SPUtils.get(mContext, LAST_CACHE_DEX_PATH);
+        String odexPath = SPUtils.get(mContext, LAST_CACHE_ODEX_PATH);
+        if (!TextUtils.isEmpty(path) && !TextUtils.isEmpty(odexPath)) {
+            try {
+                attachPack(new DexPatch(path, odexPath));
+            } catch (FileNotFoundException e) {
+                Log.e("wandfix", "last attach dex not found !");
+            }
+        }
+        return this;
+    }
+
     private static volatile Wand instance = null;
 
     public static Wand getInstance(Context context) {
@@ -77,6 +97,14 @@ public class Wand {
         return this;
     }
 
+    public Wand init(boolean isAttachLastPatch) {
+        if (isAttachLastPatch) {
+            attachLastPatch();
+        }
+        return this;
+    }
+
+
     public static Wand get() {
         if (instance == null) {
             throw new IllegalStateException("wand fix 没有初始化");
@@ -89,71 +117,70 @@ public class Wand {
         ThreadPool.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                File file = FileUtils.downloadFile(url, getCachePath(), null);
+                File file = FileUtils.downloadFile(url, def_dex_path, null);
                 if (file != null) {
-                    attachPack(file);
+                    try {
+                        attachPack(file);
+                    } catch (Throwable e) {
+                    }
                 }
             }
         });
     }
 
     public void attachPackAsset(String asset) {
-        FileUtils.copyFileFromAssets(mContext, asset, getCachePath());
-        attachPack(new File(getCachePath()));
+        FileUtils.copyFileFromAssets(mContext, asset, def_dex_path);
+        try {
+            attachPack(new File(def_dex_path));
+        } catch (Throwable e) {
+        }
     }
 
-    public DexPatch attachPack(File pack) {
-        DexPatch patch = new DexPatch(pack.getAbsolutePath(), mContext.getCacheDir().getAbsolutePath());
+    public DexPatch attachPack(File pack) throws FileNotFoundException {
+        DexPatch patch = new DexPatch(pack.getAbsolutePath(), def_odex_path);
         attachPack(patch);
         return patch;
     }
 
     public void attachPack(DexPatch dexPatch) {
         try {
-            mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, mContext.getClassLoader().getParent(), new WandClassLoader.Callback() {
+            if (dexPatch == null) {
+                return;
+            }
+
+
+            ClassLoader parent = null;
+            if (mClassLoader != null) {
+                parent = mClassLoader.getParent();
+            } else {
+                parent = mContext.getClassLoader().getParent();
+            }
+            mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, new WandClassLoader.Callback() {
                 @Override
                 public void onLoadClass(ClassLoader loader, String name) {
-                    Log.d("wandfoix_loadclass", name + " --> " + loader.getClass().getName());
+                    Log.d("wandfix_loadclass", name + " --> " + loader.getClass().getName());
                 }
 
                 @Override
                 public void onNotFound(String name) {
-                    Log.e("wandfoix_loadclass", name + " --> " + "not found");
+                    Log.e("wandfix_loadclass", name + " --> " + "not found");
                 }
             });
             HackClassLoader.hackParentClassLoader(mContext.getClassLoader(), mClassLoader);
             Message.obtain(mMainHandler, NEW_PACK_ATTACH, dexPatch.getDexFilePath()).sendToTarget();
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            SPUtils.put(mContext, LAST_CACHE_DEX_PATH, dexPatch.getDexFilePath());
+            SPUtils.put(mContext, LAST_CACHE_ODEX_PATH, dexPatch.getCacheFilePath());
+        } catch (Throwable e) {
             Message.obtain(mMainHandler, ERROR, e).sendToTarget();
         }
     }
 
-
-    private String getCachePath() {
-        String dex_path = SPUtils.get(mContext, CACHE_DEX_PATH);
-        if (!TextUtils.isEmpty(dex_path)) {
-            return dex_path;
-        }
-        String dexDir = mContext.getCacheDir().getAbsolutePath() + "/wand/";
-        File dir = new File(dexDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File file = new File(dir, "wand.dex");
-        SPUtils.put(mContext, CACHE_DEX_PATH, file.getAbsolutePath());
-        return file.getAbsolutePath();
-    }
-
     public Class<?> loadClass(String classname, ParentalEntrustmentLevel level) throws ClassNotFoundException {
-        Class result = mClassLoader.loadClass(classname);
-        if (result != null) {
-            return result;
+        if (mClassLoader == null) {
+            return mContext.getClassLoader().loadClass(classname);
         }
-        if (level == ParentalEntrustmentLevel.NEVER) {
-            return null;
-        }
-        return mContext.getClassLoader().loadClass(classname);
+        return mClassLoader.loadClass(classname);
     }
 
     public Context getContext() {
