@@ -31,7 +31,7 @@ class WandClassLoader extends DexClassLoader {
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         if (notFoundClass.contains(name)) {
             notFoundClass.remove(name);
-            //向下双亲委派
+            //向下双亲委派,告诉孩子："为父也找不到啊"
             throw new ClassNotFoundException(name);
         }
         //-------自己缓存里面找
@@ -67,7 +67,7 @@ class WandClassLoader extends DexClassLoader {
             }
         } catch (ClassNotFoundException e) {
         }
-        //--------给孩子找，孩子会继续双亲委托拜托给我，因此我记下来这个类是给孩子找的，拜托我的时候，直接告诉他找不到
+        //--------给孩子找，孩子有可能会继续因为双亲委托拜托给我，因此我记下来这个类是给孩子找的，拜托我的时候，直接告诉他"为父也找不到啊"
         notFoundClass.add(name);
         try {
             if (Wand.get().getContext().getClassLoader() != null) {
