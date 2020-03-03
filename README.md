@@ -4,7 +4,15 @@
 
 本项目旨在实现像web开发一样开发Android，代码写好发布之后就能让用户立即看到，而不是必须每次打包apk -> 更新 -> 安装，实现方式是Activity和资源文件的动态替换。   
   
-![原理图](./preview/流程图.png)  
+2019年12月27日14:58:43 本项目替换了热修复的方式，由之前的反射替换类的方式，改为了使用Hack Classloader mParent的方式。
+
+众所周知，在android中正常情况下有两个ClassLoader，分别是，BootCLassLoader - PathClassLoader 
+
+当加载一个类的时候，基于双亲委托，先由BootCLassLoader 加载这个类，如果BootCLassLoader不存在，则由PathClassLoader加载这个类。
+
+而本项目的核心替换方法就是，在BootCLassLoader - PathClassLoader 中间，插入了一个自定义的WandClassLoader，这样，当我们的项目加载一个类的时候，会先试用WandCLassLoader 加载，我们就达到替换的目的了，相对于替换之前，达到了无使用反射的目的。
+
+![流程图](./preview/流程图.png)
   
 ## About
   
