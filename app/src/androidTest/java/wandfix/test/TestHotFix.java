@@ -17,6 +17,8 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import static com.miqt.demo.clazz.TextFixBean.public_final_static_String;
+
 
 /**
  * Created by t54 on 2018/6/21.
@@ -72,7 +74,7 @@ public class TestHotFix {
     @Test
     public void test2() throws Exception {
 
-
+        Assert.assertNotNull(public_final_static_String);
 
     }
 

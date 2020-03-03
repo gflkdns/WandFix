@@ -158,7 +158,11 @@ public class Wand {
             mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, new WandClassLoader.Callback() {
                 @Override
                 public void onLoadClass(ClassLoader loader, String name) {
-                    Log.d("wandfix_loadclass", name + " --> " + loader.getClass().getName());
+                    if (mClassLoader == loader) {
+                        Log.d("wandfix_loadclass", name + " --> " + loader.getClass().getName());
+                    } else {
+                        Log.v("wandfix_loadclass", name + " --> " + loader.getClass().getName());
+                    }
                 }
 
                 @Override
