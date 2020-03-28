@@ -1,8 +1,14 @@
 package com.miqt.wand;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
+import java.nio.ByteBuffer;
 import java.util.HashSet;
+import java.util.Set;
 
 import dalvik.system.DexClassLoader;
+import dalvik.system.InMemoryDexClassLoader;
 
 /**
  * Created by miqt on 2018/7/9.
@@ -14,8 +20,32 @@ class WandClassLoader extends DexClassLoader {
      * 用来回调一个类具体是由谁加载了
      */
     private Callback callback;
-    //记录自己找不到的类
-    private HashSet<String> notFoundClass;
+    /**
+     * 记录自己找不到的类
+     */
+    private Set<String> notFoundClass;
+    /**
+     * 内存dex
+     */
+    private InMemoryDexClassLoader memoryDexClassLoader;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public WandClassLoader(ByteBuffer dexBuffers, ClassLoader parent, Callback callback) {
+        this("", null, null, parent, callback);
+        memoryDexClassLoader = new InMemoryDexClassLoader(dexBuffers, this);
+    }
+
+    public WandClassLoader(ByteBuffer[] dexBuffers, String librarySearchPath, ClassLoader parent, Callback callback) {
+        this("", null, null, parent, callback);
+        memoryDexClassLoader = new InMemoryDexClassLoader(dexBuffers, librarySearchPath, this);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O_MR1)
+    public WandClassLoader(ByteBuffer[] dexBuffers, ClassLoader parent, Callback callback) {
+        this("", null, null, parent, callback);
+        memoryDexClassLoader = new InMemoryDexClassLoader(dexBuffers, this);
+    }
+
 
     public WandClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent, Callback callback) {
         super(dexPath, optimizedDirectory, librarySearchPath, parent);
@@ -34,8 +64,23 @@ class WandClassLoader extends DexClassLoader {
             //向下双亲委派,告诉孩子："为父也找不到啊"
             throw new ClassNotFoundException(name);
         }
+        Class<?> c = null;
+        //-------内存文件中找，内存loader有可能会继续因为双亲委托拜托给我，因此我记下来这个类是给内存loader找的，拜托我的时候，直接告诉他"我也找不到啊"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && memoryDexClassLoader != null) {
+            try {
+                notFoundClass.add(name);
+                c = memoryDexClassLoader.loadClass(name);
+                if (c != null) {
+                    if (callback != null) {
+                        callback.onLoadClass(memoryDexClassLoader, name);
+                    }
+                    return c;
+                }
+            } catch (ClassNotFoundException e) {
+            }
+        }
         //-------自己缓存里面找
-        Class<?> c = findLoadedClass(name);
+        c = findLoadedClass(name);
         if (c != null) {
             if (callback != null) {
                 callback.onLoadClass(this, name);

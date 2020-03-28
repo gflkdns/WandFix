@@ -1,6 +1,7 @@
 package com.miqt.wand;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -14,7 +15,10 @@ import com.miqt.wand.utils.SPUtils;
 import com.miqt.wand.utils.ThreadPool;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * @author https://github.com/miqt/WandFix
@@ -155,7 +159,8 @@ public class Wand {
             } else {
                 parent = mContext.getClassLoader().getParent();
             }
-            mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, new WandClassLoader.Callback() {
+
+            WandClassLoader.Callback callback = new WandClassLoader.Callback() {
                 @Override
                 public void onLoadClass(ClassLoader loader, String name) {
                     if (mClassLoader == loader) {
@@ -169,7 +174,26 @@ public class Wand {
                 public void onNotFound(String name) {
                     Log.e("wandfix_loadclass", name + " --> " + "not found");
                 }
-            });
+            };
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                File dexfile = new File(dexPatch.getDexFilePath());
+                FileInputStream inputStream = new FileInputStream(dexfile);
+                FileChannel fileChannel = inputStream.getChannel();
+                try {
+                    ByteBuffer buffer = ByteBuffer.allocate((int) fileChannel.size());
+                    fileChannel.read(buffer);
+                    buffer.rewind();
+                    mClassLoader = new WandClassLoader(buffer, parent, callback);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, callback);
+                }
+                inputStream.close();
+                fileChannel.close();
+            } else {
+                mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, callback);
+            }
             HackClassLoader.hackParentClassLoader(mContext.getClassLoader(), mClassLoader);
             Message.obtain(mMainHandler, NEW_PACK_ATTACH, dexPatch.getDexFilePath()).sendToTarget();
 

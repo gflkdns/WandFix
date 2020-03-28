@@ -1,6 +1,6 @@
 package com.miqt.wand;
 
-import java.io.File;
+import java.nio.ByteBuffer;
 
 /**
  * 热修复包解码器
@@ -9,7 +9,7 @@ import java.io.File;
  * @time 2018年12月19日17:35:31
  */
 public interface Encrypter {
-    void encrypt(File from, File to);
+    byte[] encrypt(ByteBuffer data);
 
-    void decrypt(File from, File to);
+    void decrypt(ByteBuffer data);
 }
