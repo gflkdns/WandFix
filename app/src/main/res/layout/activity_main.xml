@@ -10,13 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="getStr"
-        android:text="获取字符串" />
+        android:text="模拟一个空指针" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="fix"
-        android:text="修复（联网下载修复包）" />
+        android:text="修复空指针，重启生效（联网下载修复包）" />
 
     <Button
         android:layout_width="wrap_content"
