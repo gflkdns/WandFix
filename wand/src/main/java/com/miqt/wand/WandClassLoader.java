@@ -14,10 +14,11 @@ import dalvik.system.InMemoryDexClassLoader;
  * 一个反转了双亲委托的classloader，class查找顺序为 自己（内存->缓存->dex文件）-> parent -> 孩子（默认为 context.getClassLoader）
  */
 class WandClassLoader extends DexClassLoader {
-    /**
-     * 用来回调一个类具体是由谁加载了
-     */
-    private Callback callback;
+
+    static {
+        Set.class.getName();
+    }
+
     /**
      * 记录自己找不到的类
      */
@@ -27,42 +28,29 @@ class WandClassLoader extends DexClassLoader {
      */
     private InMemoryDexClassLoader memoryDexClassLoader;
 
-    private ClassLoader childLoader = null;
-
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public WandClassLoader(ByteBuffer dexBuffers, ClassLoader parent, Callback callback) {
-        this("", null, null, parent, callback);
+    public WandClassLoader(ByteBuffer dexBuffers, ClassLoader parent) {
+        this("", null, null, parent);
         memoryDexClassLoader = new InMemoryDexClassLoader(dexBuffers, this);
     }
 
-    public WandClassLoader(ByteBuffer[] dexBuffers, String librarySearchPath, ClassLoader parent, Callback callback) {
-        this("", null, null, parent, callback);
+    public WandClassLoader(ByteBuffer[] dexBuffers, String librarySearchPath, ClassLoader parent) {
+        this("", null, null, parent);
         memoryDexClassLoader = new InMemoryDexClassLoader(dexBuffers, librarySearchPath, this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O_MR1)
-    public WandClassLoader(ByteBuffer[] dexBuffers, ClassLoader parent, Callback callback) {
-        this("", null, null, parent, callback);
+    public WandClassLoader(ByteBuffer[] dexBuffers, ClassLoader parent) {
+        this("", null, null, parent);
         memoryDexClassLoader = new InMemoryDexClassLoader(dexBuffers, this);
     }
 
 
-    public WandClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent, Callback callback) {
+    public WandClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent) {
         super(dexPath, optimizedDirectory, librarySearchPath, parent);
         notFoundClass = new HashSet<>();
-        this.callback = callback;
     }
 
-    public WandClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent) {
-        this(dexPath, optimizedDirectory, librarySearchPath, parent, null);
-    }
-
-    public void setChildLoader(ClassLoader childLoader) {
-        if (childLoader == null) {
-            return;
-        }
-        this.childLoader = childLoader;
-    }
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
@@ -78,9 +66,6 @@ class WandClassLoader extends DexClassLoader {
                 notFoundClass.add(name);
                 c = memoryDexClassLoader.loadClass(name);
                 if (c != null) {
-                    if (callback != null) {
-                        callback.onLoadClass(memoryDexClassLoader, name);
-                    }
                     return c;
                 }
             } catch (ClassNotFoundException e) {
@@ -89,18 +74,12 @@ class WandClassLoader extends DexClassLoader {
         //-------自己缓存里面找
         c = findLoadedClass(name);
         if (c != null) {
-            if (callback != null) {
-                callback.onLoadClass(this, name);
-            }
             return c;
         }
         //-------自己dex中找
         try {
             c = findClass(name);
             if (c != null) {
-                if (callback != null) {
-                    callback.onLoadClass(this, name);
-                }
                 return c;
             }
         } catch (ClassNotFoundException e) {
@@ -112,45 +91,22 @@ class WandClassLoader extends DexClassLoader {
                 c = getParent().loadClass(name);
             }
             if (c != null) {
-                if (callback != null) {
-                    callback.onLoadClass(getParent(), name);
-                }
                 return c;
             }
         } catch (ClassNotFoundException e) {
         }
-        //--------给孩子找
+        //--------给孩子找，孩子有可能会继续因为双亲委托拜托给我，因此我记下来这个类是给孩子找的，拜托我的时候，直接告诉他"为父也找不到啊"
+        notFoundClass.add(name);
         try {
-            ClassLoader child = childLoader;
-            if (child == null) {
-                child = Wand.get().getContext().getClassLoader();
-            }
-            if (child != null) {
-                //自己确实是 child 的 Parent
-                if (this == child.getParent()) {
-                    //孩子有可能会继续因为双亲委托拜托给我，因此我记下来这个类是给孩子找的，拜托我的时候，直接告诉他"为父也找不到啊"
-                    notFoundClass.add(name);
-                }
+            if (Wand.get().getContext().getClassLoader() != null) {
                 c = Wand.get().getContext().getClassLoader().loadClass(name);
             }
             if (c != null) {
-                if (callback != null) {
-                    callback.onLoadClass(Wand.get().getContext().getClassLoader(), name);
-                }
                 return c;
             }
         } catch (ClassNotFoundException e) {
         }
         //not found error
-        if (callback != null) {
-            callback.onNotFound(name);
-        }
         throw new ClassNotFoundException(name);
-    }
-
-    public interface Callback {
-        void onLoadClass(ClassLoader loader, String name);
-
-        void onNotFound(String name);
     }
 }

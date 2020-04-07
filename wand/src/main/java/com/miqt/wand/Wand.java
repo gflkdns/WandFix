@@ -157,32 +157,16 @@ public class Wand {
                 parent = mContext.getClassLoader().getParent();
             }
 
-            WandClassLoader.Callback callback = new WandClassLoader.Callback() {
-                @Override
-                public void onLoadClass(ClassLoader loader, String name) {
-                    if (mClassLoader == loader) {
-                        Log.d("wandfix_loadclass", name + " --> " + loader.getClass().getName());
-                    } else {
-                        Log.v("wandfix_loadclass", name + " --> " + loader.getClass().getName());
-                    }
-                }
-
-                @Override
-                public void onNotFound(String name) {
-                    Log.e("wandfix_loadclass", name + " --> " + "not found");
-                }
-            };
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 try {
                     File dexfile = new File(dexPatch.getDexFilePath());
-                    mClassLoader = new WandClassLoader(FileUtils.file2ByteBuffer(dexfile), parent, callback);
+                    mClassLoader = new WandClassLoader(FileUtils.file2ByteBuffer(dexfile), parent);
                 } catch (Throwable e) {
                     e.printStackTrace();
-                    mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, callback);
+                    mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent);
                 }
             } else {
-                mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, callback);
+                mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent);
             }
             HackClassLoader.hackParentClassLoader(mContext.getClassLoader(), mClassLoader);
             Message.obtain(mMainHandler, NEW_PACK_ATTACH, dexPatch.getDexFilePath()).sendToTarget();
