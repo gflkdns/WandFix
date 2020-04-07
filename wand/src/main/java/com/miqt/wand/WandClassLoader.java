@@ -11,10 +11,8 @@ import dalvik.system.DexClassLoader;
 import dalvik.system.InMemoryDexClassLoader;
 
 /**
- * Created by miqt on 2018/7/9.
- * 先自己找，自己找不到父亲找，父亲找不到孩子找
+ * 一个反转了双亲委托的classloader，class查找顺序为 自己（内存->缓存->dex文件）-> parent -> 孩子（默认为 context.getClassLoader）
  */
-
 class WandClassLoader extends DexClassLoader {
     /**
      * 用来回调一个类具体是由谁加载了
@@ -77,6 +75,8 @@ class WandClassLoader extends DexClassLoader {
                     return c;
                 }
             } catch (ClassNotFoundException e) {
+                //适配 patent 链中，没有this的场景
+                notFoundClass.remove(name);
             }
         }
         //-------自己缓存里面找
@@ -125,6 +125,8 @@ class WandClassLoader extends DexClassLoader {
                 return c;
             }
         } catch (ClassNotFoundException e) {
+            //适配 patent 链中，没有this的场景
+            notFoundClass.remove(name);
         }
         //not found error
         if (callback != null) {
