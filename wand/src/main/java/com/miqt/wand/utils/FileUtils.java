@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
@@ -219,5 +221,45 @@ public class FileUtils {
             }
         } catch (Throwable e) {
         }
+    }
+
+
+    public static void saveByteBuffer(ByteBuffer byteBuffer, File target) throws IOException {
+        byteBuffer.flip();
+        FileOutputStream outputStream = null;
+        FileChannel fileChannel = null;
+        outputStream = new FileOutputStream(target);
+        fileChannel = outputStream.getChannel();
+        fileChannel.write(byteBuffer);
+        byteBuffer.rewind();
+        StreamerUtils.safeClose(outputStream);
+        StreamerUtils.safeClose(fileChannel);
+    }
+
+    public static ByteBuffer file2ByteBuffer(File file) throws IOException {
+        FileInputStream inputStream = null;
+        FileChannel fileChannel = null;
+        ByteBuffer buffer = null;
+        inputStream = new FileInputStream(file);
+        fileChannel = inputStream.getChannel();
+        buffer = ByteBuffer.allocate((int) fileChannel.size());
+        fileChannel.read(buffer);
+        buffer.rewind();
+        StreamerUtils.safeClose(inputStream);
+        StreamerUtils.safeClose(fileChannel);
+        return buffer;
+    }
+
+    public static ByteBuffer assets2ByteBuffer(Context context, String assetsName) throws IOException {
+        InputStream inputStream = null;
+        int length = 0;
+        ByteBuffer buffer = null;
+        inputStream = context.getResources().getAssets().open(assetsName);
+        length = inputStream.available();
+        byte[] bytes = new byte[length];
+        int result = inputStream.read(bytes);
+        buffer = ByteBuffer.wrap(bytes);
+        StreamerUtils.safeClose(inputStream);
+        return buffer;
     }
 }
