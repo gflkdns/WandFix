@@ -15,10 +15,7 @@ import com.miqt.wand.utils.SPUtils;
 import com.miqt.wand.utils.ThreadPool;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
 /**
  * @author https://github.com/miqt/WandFix
@@ -177,20 +174,13 @@ public class Wand {
             };
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                File dexfile = new File(dexPatch.getDexFilePath());
-                FileInputStream inputStream = new FileInputStream(dexfile);
-                FileChannel fileChannel = inputStream.getChannel();
                 try {
-                    ByteBuffer buffer = ByteBuffer.allocate((int) fileChannel.size());
-                    fileChannel.read(buffer);
-                    buffer.rewind();
-                    mClassLoader = new WandClassLoader(buffer, parent, callback);
+                    File dexfile = new File(dexPatch.getDexFilePath());
+                    mClassLoader = new WandClassLoader(FileUtils.file2ByteBuffer(dexfile), parent, callback);
                 } catch (Throwable e) {
                     e.printStackTrace();
                     mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, callback);
                 }
-                inputStream.close();
-                fileChannel.close();
             } else {
                 mClassLoader = new WandClassLoader(dexPatch.getDexFilePath(), dexPatch.getCacheFilePath(), null, parent, callback);
             }

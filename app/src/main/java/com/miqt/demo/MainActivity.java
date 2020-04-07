@@ -40,7 +40,7 @@ public class MainActivity extends ProxyActivity implements Wand.MotorListener {
 
     @Override
     public void initError(Throwable throwable) {
-
+        throwable.printStackTrace();
     }
 
     @Override

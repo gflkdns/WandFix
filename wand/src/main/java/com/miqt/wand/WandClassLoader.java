@@ -27,6 +27,8 @@ class WandClassLoader extends DexClassLoader {
      */
     private InMemoryDexClassLoader memoryDexClassLoader;
 
+    private ClassLoader childLoader = null;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public WandClassLoader(ByteBuffer dexBuffers, ClassLoader parent, Callback callback) {
         this("", null, null, parent, callback);
@@ -55,6 +57,13 @@ class WandClassLoader extends DexClassLoader {
         this(dexPath, optimizedDirectory, librarySearchPath, parent, null);
     }
 
+    public void setChildLoader(ClassLoader childLoader) {
+        if (childLoader == null) {
+            return;
+        }
+        this.childLoader = childLoader;
+    }
+
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         if (notFoundClass.contains(name)) {
@@ -75,8 +84,6 @@ class WandClassLoader extends DexClassLoader {
                     return c;
                 }
             } catch (ClassNotFoundException e) {
-                //适配 patent 链中，没有this的场景
-                notFoundClass.remove(name);
             }
         }
         //-------自己缓存里面找
@@ -112,10 +119,18 @@ class WandClassLoader extends DexClassLoader {
             }
         } catch (ClassNotFoundException e) {
         }
-        //--------给孩子找，孩子有可能会继续因为双亲委托拜托给我，因此我记下来这个类是给孩子找的，拜托我的时候，直接告诉他"为父也找不到啊"
-        notFoundClass.add(name);
+        //--------给孩子找
         try {
-            if (Wand.get().getContext().getClassLoader() != null) {
+            ClassLoader child = childLoader;
+            if (child == null) {
+                child = Wand.get().getContext().getClassLoader();
+            }
+            if (child != null) {
+                //自己确实是 child 的 Parent
+                if (this == child.getParent()) {
+                    //孩子有可能会继续因为双亲委托拜托给我，因此我记下来这个类是给孩子找的，拜托我的时候，直接告诉他"为父也找不到啊"
+                    notFoundClass.add(name);
+                }
                 c = Wand.get().getContext().getClassLoader().loadClass(name);
             }
             if (c != null) {
@@ -125,8 +140,6 @@ class WandClassLoader extends DexClassLoader {
                 return c;
             }
         } catch (ClassNotFoundException e) {
-            //适配 patent 链中，没有this的场景
-            notFoundClass.remove(name);
         }
         //not found error
         if (callback != null) {
