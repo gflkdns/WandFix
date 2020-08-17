@@ -3,10 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MVPHotFix.iml" filepath="$PROJECT_DIR$/MVPHotFix.iml" />
-      <module fileurl="file://$PROJECT_DIR$/WandFix.iml" filepath="$PROJECT_DIR$/WandFix.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/wand/wand.iml" filepath="$PROJECT_DIR$/wand/wand.iml" />
-      <module fileurl="file://$PROJECT_DIR$/wand-compiler/wand-compiler.iml" filepath="$PROJECT_DIR$/wand-compiler/wand-compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WandFix.iml" filepath="$PROJECT_DIR$/WandFix.iml" group="WandFix" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="WandFix/app" />
+      <module fileurl="file://$PROJECT_DIR$/wand/wand.iml" filepath="$PROJECT_DIR$/wand/wand.iml" group="WandFix/wand" />
+      <module fileurl="file://$PROJECT_DIR$/wand-compiler/wand-compiler.iml" filepath="$PROJECT_DIR$/wand-compiler/wand-compiler.iml" group="WandFix/wand-compiler" />
     </modules>
   </component>
 </project>
